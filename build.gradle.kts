@@ -16,6 +16,7 @@ import java.io.FileInputStream
 plugins {
     id("com.vanniktech.maven.publish") version "0.35.0"
     `java-library`
+    signing
 }
 
 // Load .env file if it exists
@@ -162,7 +163,16 @@ tasks.withType<Javadoc>().configureEach {
 
 mavenPublishing {
     publishToMavenCentral(automaticRelease = true)
-    signAllPublications()
+}
+
+// Manual signing configuration using environment variables
+signing {
+    val signingKey = providers.environmentVariable("GPG_PRIVATE_KEY").orNull
+    val signingPassword = providers.environmentVariable("GPG_PASSPHRASE").orNull
+    if (signingKey != null) {
+        useInMemoryPgpKeys(signingKey, signingPassword ?: "")
+        sign(publishing.publications)
+    }
 }
 
 // Fix task dependency issue with Gradle 9.x and vanniktech plugin
