@@ -70,7 +70,7 @@ dependencies {
     implementation(platform("tools.jackson:jackson-bom:3.0.0-rc4"))
     implementation("tools.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.core:jackson-annotations")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.11.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.0.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.0")
 }
 
