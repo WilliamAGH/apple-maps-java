@@ -1,4 +1,3 @@
-import com.vanniktech.maven.publish.SonatypeHost
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
@@ -15,7 +14,7 @@ import java.util.Properties
 import java.io.FileInputStream
 
 plugins {
-    id("com.vanniktech.maven.publish") version "0.26.0"
+    id("com.vanniktech.maven.publish") version "0.35.0"
     `java-library`
 }
 
@@ -67,11 +66,11 @@ val javaLauncherForTargetVersion = javaToolchainService.launcherFor {
 }
 
 dependencies {
-    implementation(platform("tools.jackson:jackson-bom:3.0.0-rc4"))
+    implementation(platform("tools.jackson:jackson-bom:3.0.3"))
     implementation("tools.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.core:jackson-annotations")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.11.0")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.0.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.2")
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -162,6 +161,6 @@ tasks.withType<Javadoc>().configureEach {
 }
 
 mavenPublishing {
-    publishToMavenCentral(SonatypeHost.S01, true)
+    publishToMavenCentral(automaticRelease = true)
     signAllPublications()
 }
