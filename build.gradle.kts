@@ -164,3 +164,8 @@ mavenPublishing {
     publishToMavenCentral(automaticRelease = true)
     signAllPublications()
 }
+
+// Fix task dependency issue with Gradle 9.x and vanniktech plugin
+tasks.matching { it.name == "generateMetadataFileForMavenPublication" }.configureEach {
+    dependsOn(tasks.matching { it.name == "plainJavadocJar" })
+}
