@@ -71,7 +71,7 @@ dependencies {
     implementation("tools.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.core:jackson-annotations")
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.0")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.0")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.2")
 }
 
 tasks.withType<JavaCompile>().configureEach {
