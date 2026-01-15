@@ -15,7 +15,7 @@ import java.util.Properties
 import java.io.FileInputStream
 
 plugins {
-    id("com.vanniktech.maven.publish") version "0.26.0"
+    id("com.vanniktech.maven.publish") version "0.35.0"
     `java-library`
 }
 
