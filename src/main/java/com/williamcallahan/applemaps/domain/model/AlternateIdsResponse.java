@@ -7,6 +7,12 @@ import java.util.Objects;
  * A list of alternate Place ID results and lookup errors.
  */
 public record AlternateIdsResponse(List<AlternateIdsEntry> results, List<PlaceLookupError> errors) {
+    /**
+     * Canonical constructor that normalizes potentially-null lists to immutable lists.
+     *
+     * @param results alternate ID results
+     * @param errors lookup errors
+     */
     public AlternateIdsResponse {
         results = normalizeList(results);
         errors = normalizeList(errors);

@@ -13,6 +13,15 @@ public record EtaEstimate(
     Optional<Long> staticTravelTimeSeconds,
     Optional<TransportType> transportType
 ) {
+    /**
+     * Canonical constructor that normalizes potentially-null optionals.
+     *
+     * @param destination destination location, if available
+     * @param distanceMeters travel distance in meters, if available
+     * @param expectedTravelTimeSeconds expected travel time in seconds, if available
+     * @param staticTravelTimeSeconds static travel time in seconds, if available
+     * @param transportType transport type, if available
+     */
     public EtaEstimate {
         destination = normalizeOptional(destination);
         distanceMeters = normalizeOptional(distanceMeters);

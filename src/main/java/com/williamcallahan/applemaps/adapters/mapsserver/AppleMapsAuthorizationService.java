@@ -31,6 +31,12 @@ public final class AppleMapsAuthorizationService {
     private final ReentrantLock refreshLock = new ReentrantLock();
     private final AtomicReference<AccessToken> accessToken = new AtomicReference<>();
 
+    /**
+     * Creates a service that exchanges an authorization token for access tokens.
+     *
+     * @param authToken the Apple Maps Server API authorization token
+     * @param timeout request timeout for token exchange
+     */
     public AppleMapsAuthorizationService(String authToken, Duration timeout) {
         this(new Dependencies(authToken, timeout));
     }
@@ -44,6 +50,11 @@ public final class AppleMapsAuthorizationService {
         this.clock = dependencies.clock();
     }
 
+    /**
+     * Returns a cached access token, refreshing it when needed.
+     *
+     * @return the access token string
+     */
     public String getAccessToken() {
         AccessToken cachedToken = accessToken.get();
         if (cachedToken != null && !isExpiring(cachedToken)) {

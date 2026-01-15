@@ -8,6 +8,12 @@ import java.util.Optional;
  * Alternate Place identifiers associated with a primary Place ID.
  */
 public record AlternateIdsEntry(Optional<String> id, List<String> alternateIds) {
+    /**
+     * Canonical constructor that normalizes potentially-null inputs to non-null values.
+     *
+     * @param id the primary place ID (optional)
+     * @param alternateIds alternate place IDs associated with {@code id}
+     */
     public AlternateIdsEntry {
         id = normalizeOptional(id);
         alternateIds = normalizeList(alternateIds);

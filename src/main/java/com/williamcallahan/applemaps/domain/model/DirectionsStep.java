@@ -13,6 +13,15 @@ public record DirectionsStep(
     Optional<String> instructions,
     Optional<TransportType> transportType
 ) {
+    /**
+     * Canonical constructor that normalizes potentially-null optionals.
+     *
+     * @param stepPathIndex index into the step paths array, if available
+     * @param distanceMeters step distance in meters, if available
+     * @param durationSeconds step duration in seconds, if available
+     * @param instructions instructions text, if available
+     * @param transportType transport type, if available
+     */
     public DirectionsStep {
         stepPathIndex = normalizeOptional(stepPathIndex);
         distanceMeters = normalizeOptional(distanceMeters);

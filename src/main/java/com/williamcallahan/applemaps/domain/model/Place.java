@@ -18,6 +18,19 @@ public record Place(
     String country,
     String countryCode
 ) {
+    /**
+     * Canonical constructor that normalizes potentially-null optionals and lists.
+     *
+     * @param id place identifier, if available
+     * @param alternateIds alternate place identifiers
+     * @param name place name
+     * @param coordinate place coordinate
+     * @param displayMapRegion map region to display, if available
+     * @param formattedAddressLines formatted address lines
+     * @param structuredAddress structured address, if available
+     * @param country country name
+     * @param countryCode country code
+     */
     public Place {
         id = normalizeOptional(id);
         alternateIds = normalizeList(alternateIds);

@@ -9,10 +9,24 @@ import java.util.Objects;
 public record SearchRegion(String coordinateBounds) {
     private static final String COORDINATE_SEPARATOR = ",";
 
+    /**
+     * Canonical constructor that validates the coordinate bounds are non-null.
+     *
+     * @param coordinateBounds formatted coordinate bounds string
+     */
     public SearchRegion {
         Objects.requireNonNull(coordinateBounds, "coordinateBounds");
     }
 
+    /**
+     * Creates a search region from a bounding box.
+     *
+     * @param northLatitude northern latitude in decimal degrees
+     * @param eastLongitude eastern longitude in decimal degrees
+     * @param southLatitude southern latitude in decimal degrees
+     * @param westLongitude western longitude in decimal degrees
+     * @return a search region
+     */
     public static SearchRegion fromBounds(
         double northLatitude,
         double eastLongitude,
@@ -22,6 +36,12 @@ public record SearchRegion(String coordinateBounds) {
         return new SearchRegion(formatBounds(northLatitude, eastLongitude, southLatitude, westLongitude));
     }
 
+    /**
+     * Creates a search region from a {@link SearchMapRegion}.
+     *
+     * @param searchMapRegion the map region to convert
+     * @return a search region
+     */
     public static SearchRegion fromSearchMapRegion(SearchMapRegion searchMapRegion) {
         Objects.requireNonNull(searchMapRegion, "searchMapRegion");
         return fromBounds(
@@ -32,6 +52,11 @@ public record SearchRegion(String coordinateBounds) {
         );
     }
 
+    /**
+     * Converts this region into the format used by query parameters.
+     *
+     * @return the query string value
+     */
     public String toQueryString() {
         return coordinateBounds;
     }

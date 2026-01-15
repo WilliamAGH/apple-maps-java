@@ -20,6 +20,21 @@ public record StructuredAddress(
     Optional<String> subThoroughfare,
     Optional<String> thoroughfare
 ) {
+    /**
+     * Canonical constructor that normalizes potentially-null optionals and lists.
+     *
+     * @param administrativeArea administrative area, if available
+     * @param administrativeAreaCode administrative area code, if available
+     * @param subAdministrativeArea sub-administrative area, if available
+     * @param areasOfInterest areas of interest
+     * @param dependentLocalities dependent localities
+     * @param fullThoroughfare full thoroughfare, if available
+     * @param locality locality, if available
+     * @param postCode postal code, if available
+     * @param subLocality sub-locality, if available
+     * @param subThoroughfare sub-thoroughfare, if available
+     * @param thoroughfare thoroughfare, if available
+     */
     public StructuredAddress {
         administrativeArea = normalizeOptional(administrativeArea);
         administrativeAreaCode = normalizeOptional(administrativeAreaCode);

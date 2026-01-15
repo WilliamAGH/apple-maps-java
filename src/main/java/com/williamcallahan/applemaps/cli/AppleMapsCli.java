@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+/**
+ * Command line interface for exercising Apple Maps Server API operations.
+ */
 public final class AppleMapsCli {
 
     private static final int EXIT_USAGE = 2;
@@ -55,6 +58,11 @@ public final class AppleMapsCli {
 
     private AppleMapsCli() {}
 
+    /**
+     * CLI entry point.
+     *
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
         try {
             run(args);

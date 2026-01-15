@@ -56,6 +56,12 @@ public final class HttpAppleMapsGateway implements AppleMapsGateway {
     private final Duration timeout;
     private final ExecutorService executorService;
 
+    /**
+     * Creates an HTTP gateway that calls the Apple Maps Server API.
+     *
+     * @param authToken the Apple Maps Server API authorization token
+     * @param timeout request timeout
+     */
     public HttpAppleMapsGateway(String authToken, Duration timeout) {
         this(new Dependencies(authToken, timeout));
     }
