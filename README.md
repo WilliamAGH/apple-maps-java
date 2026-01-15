@@ -10,7 +10,7 @@ A lightweight Java SDK for the Apple Maps Server API, with automatic access-toke
 
 ## Installation
 
-Replace `0.1.1` with the latest release.
+Replace `0.1.2` with the latest release.
 
 Note: this repo’s build uses a Gradle Java toolchain (Java 17). If you don’t have JDK 17 installed locally, Gradle will download it automatically.
 
@@ -18,7 +18,7 @@ Note: this repo’s build uses a Gradle Java toolchain (Java 17). If you don’t
 
 ```groovy
 dependencies {
-    implementation("com.williamcallahan:apple-maps-java:0.1.1")
+    implementation("com.williamcallahan:apple-maps-java:0.1.2")
 }
 ```
 
@@ -28,7 +28,7 @@ dependencies {
 <dependency>
   <groupId>com.williamcallahan</groupId>
   <artifactId>apple-maps-java</artifactId>
-  <version>0.1.1</version>
+  <version>0.1.2</version>
 </dependency>
 ```
 
