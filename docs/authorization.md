@@ -18,6 +18,7 @@ Option A (recommended): environment variable
 
 ```bash
 export APPLE_MAPS_TOKEN="your-token"
+export APPLE_MAPS_ORIGIN="https://api.example.com" # Required if your JWT has a specific origin
 ```
 
 Option B (local dev for this repo): `.env` fallback
@@ -31,7 +32,7 @@ cp .env-example .env
 `.env` is ignored by git (so you don’t accidentally commit secrets).
 
 This project’s Gradle build loads `.env` into **system properties**, which is mainly convenient for running tests locally.
-In CI, prefer setting `APPLE_MAPS_TOKEN` as an environment variable.
+In CI, set `APPLE_MAPS_TOKEN` as an environment variable. Optionally set `APPLE_MAPS_ORIGIN` if your token requires it (e.g., `https://api.example.com` matching your JWT's `origin` claim).
 
 ## Supplying the token to the SDK
 
@@ -40,9 +41,13 @@ For example:
 
 ```java
 String token = System.getenv("APPLE_MAPS_TOKEN");
+String origin = System.getenv("APPLE_MAPS_ORIGIN");
 if (token == null || token.isBlank()) {
     token = System.getProperty("APPLE_MAPS_TOKEN");
 }
+if (origin == null || origin.isBlank()) {
+    origin = System.getProperty("APPLE_MAPS_ORIGIN");
+}
 
-AppleMaps api = new AppleMaps(token);
+AppleMaps api = new AppleMaps(token, origin);
 ```
