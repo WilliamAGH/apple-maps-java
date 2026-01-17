@@ -1,6 +1,7 @@
 package com.williamcallahan.applemaps.adapters.mapsserver;
 
-import com.williamcallahan.applemaps.adapters.jackson.AppleMapsObjectMapperFactory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.net.Authenticator;
 import java.net.CookieHandler;
 import java.net.ProxySelector;
@@ -29,12 +30,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Flow;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLSession;
+
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import com.williamcallahan.applemaps.adapters.jackson.AppleMapsObjectMapperFactory;
 
 class AppleMapsAuthorizationServiceTest {
     private static final URI TOKEN_URI = URI.create("https://maps-api.apple.com/v1/token");
@@ -61,6 +64,7 @@ class AppleMapsAuthorizationServiceTest {
                     TOKEN_URI,
                     REQUEST_TIMEOUT,
                     AUTH_TOKEN,
+                    "origin",
                     tokenClock
                 )
             )
@@ -87,6 +91,7 @@ class AppleMapsAuthorizationServiceTest {
                     TOKEN_URI,
                     REQUEST_TIMEOUT,
                     AUTH_TOKEN,
+                    "origin",
                     tokenClock
                 )
             )

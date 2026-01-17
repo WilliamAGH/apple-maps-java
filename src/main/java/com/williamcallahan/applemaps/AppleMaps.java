@@ -1,5 +1,10 @@
 package com.williamcallahan.applemaps;
 
+import java.time.Duration;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+
 import com.williamcallahan.applemaps.adapters.mapsserver.AppleMapsClientException;
 import com.williamcallahan.applemaps.adapters.mapsserver.HttpAppleMapsGateway;
 import com.williamcallahan.applemaps.domain.model.AlternateIdsResponse;
@@ -19,10 +24,6 @@ import com.williamcallahan.applemaps.domain.request.GeocodeInput;
 import com.williamcallahan.applemaps.domain.request.PlaceLookupInput;
 import com.williamcallahan.applemaps.domain.request.SearchAutocompleteInput;
 import com.williamcallahan.applemaps.domain.request.SearchInput;
-import java.time.Duration;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Entry point for Apple Maps Server API operations.
@@ -39,7 +40,17 @@ public final class AppleMaps implements AutoCloseable {
      * @param authToken the Apple Maps Server API authorization token
      */
     public AppleMaps(String authToken) {
-        this(authToken, DEFAULT_TIMEOUT);
+        this(authToken, DEFAULT_TIMEOUT, null);
+    }
+
+    /**
+     * Creates an {@link AppleMaps} client using the provided authorization token and origin.
+     *
+     * @param authToken the Apple Maps Server API authorization token
+     * @param origin value for the Origin header (required for some JWT configurations)
+     */
+    public AppleMaps(String authToken, String origin) {
+        this(authToken, DEFAULT_TIMEOUT, origin);
     }
 
     /**
@@ -49,9 +60,20 @@ public final class AppleMaps implements AutoCloseable {
      * @param timeout request timeout
      */
     public AppleMaps(String authToken, Duration timeout) {
+        this(authToken, timeout, null);
+    }
+
+    /**
+     * Creates an {@link AppleMaps} client using the provided authorization token, timeout, and origin.
+     *
+     * @param authToken the Apple Maps Server API authorization token
+     * @param timeout request timeout
+     * @param origin value for the Origin header (required for some JWT configurations)
+     */
+    public AppleMaps(String authToken, Duration timeout, String origin) {
         Objects.requireNonNull(authToken, "authToken");
         Objects.requireNonNull(timeout, "timeout");
-        this.gateway = new HttpAppleMapsGateway(authToken, timeout);
+        this.gateway = new HttpAppleMapsGateway(authToken, timeout, origin);
     }
 
     /**
