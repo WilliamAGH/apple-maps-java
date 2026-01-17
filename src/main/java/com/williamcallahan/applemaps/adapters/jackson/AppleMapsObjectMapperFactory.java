@@ -15,6 +15,11 @@ public final class AppleMapsObjectMapperFactory {
 
     private AppleMapsObjectMapperFactory() {}
 
+    /**
+     * Creates a new {@link ObjectMapper} configured for Apple Maps Server API models.
+     *
+     * @return an object mapper instance
+     */
     public static ObjectMapper create() {
         return JsonMapper.builder()
             .addMixIn(Location.class, LocationMixin.class)

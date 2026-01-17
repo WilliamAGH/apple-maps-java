@@ -1,7 +1,5 @@
 package com.williamcallahan.applemaps.adapters.mapsserver;
 
-import com.williamcallahan.applemaps.adapters.jackson.AppleMapsObjectMapperFactory;
-import com.williamcallahan.applemaps.domain.model.TokenResponse;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -13,6 +11,10 @@ import java.util.Base64;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
+
+import com.williamcallahan.applemaps.adapters.jackson.AppleMapsObjectMapperFactory;
+import com.williamcallahan.applemaps.domain.model.TokenResponse;
+
 import tools.jackson.databind.ObjectMapper;
 
 /**
@@ -27,12 +29,19 @@ public final class AppleMapsAuthorizationService {
     private final URI tokenUri;
     private final Duration timeout;
     private final String authToken;
+    private final String origin;
     private final Clock clock;
     private final ReentrantLock refreshLock = new ReentrantLock();
     private final AtomicReference<AccessToken> accessToken = new AtomicReference<>();
 
-    public AppleMapsAuthorizationService(String authToken, Duration timeout) {
-        this(new Dependencies(authToken, timeout));
+    /**
+     * Creates a service that exchanges an authorization token for access tokens.
+     *
+     * @param authToken the Apple Maps Server API authorization token
+     * @param timeout request timeout for token exchange
+     */
+    public AppleMapsAuthorizationService(String authToken, Duration timeout, String origin) {
+        this(new Dependencies(authToken, timeout, origin));
     }
 
     AppleMapsAuthorizationService(Dependencies dependencies) {
@@ -41,9 +50,19 @@ public final class AppleMapsAuthorizationService {
         this.tokenUri = dependencies.tokenUri();
         this.timeout = dependencies.timeout();
         this.authToken = dependencies.authToken();
+        this.origin = dependencies.origin();
         this.clock = dependencies.clock();
     }
+    
+    public String getOrigin() {
+        return origin;
+    }
 
+    /**
+     * Returns a cached access token, refreshing it when needed.
+     *
+     * @return the access token string
+     */
     public String getAccessToken() {
         AccessToken cachedToken = accessToken.get();
         if (cachedToken != null && !isExpiring(cachedToken)) {
@@ -63,12 +82,17 @@ public final class AppleMapsAuthorizationService {
     }
 
     private AccessToken refreshAccessToken() {
-        HttpRequest httpRequest = HttpRequest.newBuilder()
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
             .GET()
             .timeout(timeout)
             .uri(tokenUri)
-            .setHeader("Authorization", "Bearer " + authToken)
-            .build();
+            .setHeader("Authorization", "Bearer " + authToken);
+            
+        if (origin != null) {
+            builder.setHeader("Origin", origin);
+        }
+
+        HttpRequest httpRequest = builder.build();
         try {
             HttpResponse<byte[]> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
             if (response.statusCode() != 200) {
@@ -119,15 +143,17 @@ public final class AppleMapsAuthorizationService {
         private final URI tokenUri;
         private final Duration timeout;
         private final String authToken;
+        private final String origin;
         private final Clock clock;
 
-        Dependencies(String authToken, Duration timeout) {
+        Dependencies(String authToken, Duration timeout, String origin) {
             this(new DependenciesConfig(
                 AppleMapsObjectMapperFactory.create(),
                 HttpClient.newHttpClient(),
                 URI.create("https://maps-api.apple.com" + TOKEN_PATH),
                 timeout,
                 authToken,
+                origin,
                 Clock.systemUTC()
             ));
         }
@@ -138,6 +164,7 @@ public final class AppleMapsAuthorizationService {
             this.tokenUri = Objects.requireNonNull(config.tokenUri(), "tokenUri");
             this.timeout = Objects.requireNonNull(config.timeout(), "timeout");
             this.authToken = Objects.requireNonNull(config.authToken(), "authToken");
+            this.origin = config.origin();
             this.clock = Objects.requireNonNull(config.clock(), "clock");
         }
 
@@ -147,6 +174,7 @@ public final class AppleMapsAuthorizationService {
             URI tokenUri,
             Duration timeout,
             String authToken,
+            String origin,
             Clock clock
         ) {
         }
@@ -169,6 +197,10 @@ public final class AppleMapsAuthorizationService {
 
         String authToken() {
             return authToken;
+        }
+
+        String origin() {
+            return origin;
         }
 
         Clock clock() {

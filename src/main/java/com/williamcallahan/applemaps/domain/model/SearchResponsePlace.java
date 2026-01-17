@@ -19,6 +19,20 @@ public record SearchResponsePlace(
     String countryCode,
     Optional<PoiCategory> poiCategory
 ) {
+    /**
+     * Canonical constructor that normalizes potentially-null optionals and lists.
+     *
+     * @param id place identifier, if available
+     * @param alternateIds alternate place identifiers
+     * @param name place name
+     * @param coordinate place coordinate
+     * @param displayMapRegion map region to display, if available
+     * @param formattedAddressLines formatted address lines
+     * @param structuredAddress structured address, if available
+     * @param country country name
+     * @param countryCode country code
+     * @param poiCategory point-of-interest category, if available
+     */
     public SearchResponsePlace {
         id = normalizeOptional(id);
         alternateIds = normalizeList(alternateIds);

@@ -15,17 +15,33 @@ public record AlternateIdsInput(List<String> ids) {
     private static final String PARAMETER_IDS = "ids";
     private static final String LIST_SEPARATOR = ",";
 
+    /**
+     * Canonical constructor that validates required fields and normalizes collections.
+     *
+     * @param ids place identifiers to resolve alternate IDs for
+     */
     public AlternateIdsInput {
         ids = normalizeList(ids);
         validateIds(ids);
     }
 
+    /**
+     * Converts this input to a query string suitable for the Apple Maps Server API.
+     *
+     * @return a query string beginning with {@code ?}
+     */
     public String toQueryString() {
         List<String> parameters = new ArrayList<>();
         parameters.add(formatParameter(PARAMETER_IDS, joinEncoded(ids)));
         return QUERY_PREFIX + String.join(PARAMETER_SEPARATOR, parameters);
     }
 
+    /**
+     * Creates a builder initialized with the required place IDs.
+     *
+     * @param ids the place IDs to resolve alternate IDs for
+     * @return a builder
+     */
     public static Builder builder(List<String> ids) {
         return new Builder(ids);
     }
@@ -55,6 +71,9 @@ public record AlternateIdsInput(List<String> ids) {
         return URLEncoder.encode(rawText, StandardCharsets.UTF_8);
     }
 
+    /**
+     * Builder for {@link AlternateIdsInput}.
+     */
     public static final class Builder {
         private final List<String> ids;
 
@@ -62,6 +81,11 @@ public record AlternateIdsInput(List<String> ids) {
             this.ids = normalizeList(ids);
         }
 
+        /**
+         * Builds a validated {@link AlternateIdsInput}.
+         *
+         * @return an input instance
+         */
         public AlternateIdsInput build() {
             return new AlternateIdsInput(ids);
         }

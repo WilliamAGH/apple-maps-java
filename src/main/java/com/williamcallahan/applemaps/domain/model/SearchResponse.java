@@ -12,6 +12,13 @@ public record SearchResponse(
     Optional<PaginationInfo> paginationInfo,
     List<SearchResponsePlace> results
 ) {
+    /**
+     * Canonical constructor that normalizes potentially-null optionals and lists.
+     *
+     * @param displayMapRegion display map region returned by the API
+     * @param paginationInfo pagination information, if available
+     * @param results search results returned by the API
+     */
     public SearchResponse {
         displayMapRegion = Objects.requireNonNull(displayMapRegion, "displayMapRegion");
         paginationInfo = normalizeOptional(paginationInfo);

@@ -15,6 +15,16 @@ public record DirectionsRoute(
     List<Integer> stepIndexes,
     Optional<TransportType> transportType
 ) {
+    /**
+     * Canonical constructor that normalizes potentially-null optionals and lists.
+     *
+     * @param name route name, if available
+     * @param distanceMeters route distance in meters, if available
+     * @param durationSeconds route duration in seconds, if available
+     * @param hasTolls whether the route has tolls, if available
+     * @param stepIndexes indexes into the directions steps array
+     * @param transportType transport type, if available
+     */
     public DirectionsRoute {
         name = normalizeOptional(name);
         distanceMeters = normalizeOptional(distanceMeters);

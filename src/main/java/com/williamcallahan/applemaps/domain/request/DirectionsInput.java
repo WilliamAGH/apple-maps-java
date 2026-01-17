@@ -44,6 +44,21 @@ public record DirectionsInput(
     private static final String PARAMETER_TRANSPORT_TYPE = "transportType";
     private static final String PARAMETER_USER_LOCATION = "userLocation";
 
+    /**
+     * Canonical constructor that validates required fields and normalizes optional values.
+     *
+     * @param origin the origin endpoint
+     * @param destination the destination endpoint
+     * @param arrivalDate optional arrival date/time (format as expected by the API)
+     * @param avoid route features to avoid
+     * @param departureDate optional departure date/time (format as expected by the API)
+     * @param language optional response language (BCP 47)
+     * @param requestsAlternateRoutes optional flag to request alternate routes
+     * @param searchLocation optional search location hint
+     * @param searchRegion optional search region hint
+     * @param transportType optional transport type
+     * @param userLocation optional user location hint
+     */
     public DirectionsInput {
         origin = Objects.requireNonNull(origin, "origin");
         destination = Objects.requireNonNull(destination, "destination");
@@ -59,6 +74,11 @@ public record DirectionsInput(
         validateDates(arrivalDate, departureDate);
     }
 
+    /**
+     * Converts this input to a query string suitable for the Apple Maps Server API.
+     *
+     * @return a query string beginning with {@code ?}
+     */
     public String toQueryString() {
         List<String> parameters = new ArrayList<>();
         parameters.add(formatParameter(PARAMETER_ORIGIN, encode(origin.toQueryString())));
@@ -82,6 +102,13 @@ public record DirectionsInput(
         return QUERY_PREFIX + String.join(PARAMETER_SEPARATOR, parameters);
     }
 
+    /**
+     * Creates a builder initialized with the required origin and destination.
+     *
+     * @param origin the origin endpoint
+     * @param destination the destination endpoint
+     * @return a builder
+     */
     public static Builder builder(DirectionsEndpoint origin, DirectionsEndpoint destination) {
         return new Builder(origin, destination);
     }
@@ -115,6 +142,9 @@ public record DirectionsInput(
         return URLEncoder.encode(rawText, StandardCharsets.UTF_8);
     }
 
+    /**
+     * Builder for {@link DirectionsInput}.
+     */
     public static final class Builder {
         private final DirectionsEndpoint origin;
         private final DirectionsEndpoint destination;
@@ -133,51 +163,110 @@ public record DirectionsInput(
             this.destination = Objects.requireNonNull(destination, "destination");
         }
 
+        /**
+         * Sets the arrival date/time parameter (format as expected by the API).
+         *
+         * @param arrivalDate the arrival date/time, or {@code null} to clear
+         * @return this builder
+         */
         public Builder arrivalDate(String arrivalDate) {
             this.arrivalDate = Optional.ofNullable(arrivalDate);
             return this;
         }
 
+        /**
+         * Sets route features to avoid.
+         *
+         * @param avoid route features to avoid (empty means no avoid filters)
+         * @return this builder
+         */
         public Builder avoid(List<DirectionsAvoid> avoid) {
             this.avoid = normalizeList(avoid);
             return this;
         }
 
+        /**
+         * Sets the departure date/time parameter (format as expected by the API).
+         *
+         * @param departureDate the departure date/time, or {@code null} to clear
+         * @return this builder
+         */
         public Builder departureDate(String departureDate) {
             this.departureDate = Optional.ofNullable(departureDate);
             return this;
         }
 
+        /**
+         * Sets the response language (BCP 47).
+         *
+         * @param language the language tag, or {@code null} to clear
+         * @return this builder
+         */
         public Builder language(String language) {
             this.language = Optional.ofNullable(language);
             return this;
         }
 
+        /**
+         * Sets whether alternate routes should be requested.
+         *
+         * @param requestsAlternateRoutes {@code true} to request alternate routes, or {@code null} to clear
+         * @return this builder
+         */
         public Builder requestsAlternateRoutes(Boolean requestsAlternateRoutes) {
             this.requestsAlternateRoutes = Optional.ofNullable(requestsAlternateRoutes);
             return this;
         }
 
+        /**
+         * Sets the search location hint used by the API.
+         *
+         * @param searchLocation the search location, or {@code null} to clear
+         * @return this builder
+         */
         public Builder searchLocation(RouteLocation searchLocation) {
             this.searchLocation = Optional.ofNullable(searchLocation);
             return this;
         }
 
+        /**
+         * Sets the search region hint used by the API.
+         *
+         * @param searchRegion the search region, or {@code null} to clear
+         * @return this builder
+         */
         public Builder searchRegion(SearchRegion searchRegion) {
             this.searchRegion = Optional.ofNullable(searchRegion);
             return this;
         }
 
+        /**
+         * Sets the requested transport type.
+         *
+         * @param transportType the transport type, or {@code null} to clear
+         * @return this builder
+         */
         public Builder transportType(TransportType transportType) {
             this.transportType = Optional.ofNullable(transportType);
             return this;
         }
 
+        /**
+         * Sets the user location hint used by the API.
+         *
+         * @param userLocation the user location, or {@code null} to clear
+         * @return this builder
+         */
         public Builder userLocation(RouteLocation userLocation) {
             this.userLocation = Optional.ofNullable(userLocation);
             return this;
         }
 
+        /**
+         * Builds a validated {@link DirectionsInput}.
+         *
+         * @return an input instance
+         */
         public DirectionsInput build() {
             return new DirectionsInput(
                 origin,

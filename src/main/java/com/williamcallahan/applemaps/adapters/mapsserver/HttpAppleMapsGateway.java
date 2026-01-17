@@ -1,5 +1,17 @@
 package com.williamcallahan.applemaps.adapters.mapsserver;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.williamcallahan.applemaps.adapters.jackson.AppleMapsObjectMapperFactory;
 import com.williamcallahan.applemaps.domain.model.AlternateIdsResponse;
 import com.williamcallahan.applemaps.domain.model.DirectionsResponse;
@@ -17,17 +29,7 @@ import com.williamcallahan.applemaps.domain.request.GeocodeInput;
 import com.williamcallahan.applemaps.domain.request.PlaceLookupInput;
 import com.williamcallahan.applemaps.domain.request.SearchAutocompleteInput;
 import com.williamcallahan.applemaps.domain.request.SearchInput;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
-import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+
 import tools.jackson.databind.ObjectMapper;
 
 /**
@@ -56,8 +58,18 @@ public final class HttpAppleMapsGateway implements AppleMapsGateway {
     private final Duration timeout;
     private final ExecutorService executorService;
 
+    /**
+     * Creates an HTTP gateway that calls the Apple Maps Server API.
+     *
+     * @param authToken the Apple Maps Server API authorization token
+     * @param timeout request timeout
+     */
     public HttpAppleMapsGateway(String authToken, Duration timeout) {
-        this(new Dependencies(authToken, timeout));
+        this(new Dependencies(authToken, timeout, null));
+    }
+
+    public HttpAppleMapsGateway(String authToken, Duration timeout, String origin) {
+        this(new Dependencies(authToken, timeout, origin));
     }
 
     HttpAppleMapsGateway(Dependencies dependencies) {
@@ -158,12 +170,18 @@ public final class HttpAppleMapsGateway implements AppleMapsGateway {
     }
 
     private <T> T invokeApi(String operation, URI uri, Class<T> responseType) {
-        HttpRequest httpRequest = HttpRequest.newBuilder()
+        
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
             .GET()
             .uri(uri)
             .timeout(timeout)
-            .setHeader("Authorization", "Bearer " + authorizationService.getAccessToken())
-            .build();
+            .setHeader("Authorization", "Bearer " + authorizationService.getAccessToken());
+
+        if (authorizationService.getOrigin() != null) {
+            builder.setHeader("Origin", authorizationService.getOrigin());
+        }
+            
+        HttpRequest httpRequest = builder.build();
         try {
             HttpResponse<byte[]> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
             if (response.statusCode() != 200) {
@@ -184,8 +202,8 @@ public final class HttpAppleMapsGateway implements AppleMapsGateway {
         private final Duration timeout;
         private final ExecutorService executorService;
 
-        Dependencies(String authToken, Duration timeout) {
-            this(createDefaultDependenciesConfig(authToken, timeout));
+        Dependencies(String authToken, Duration timeout, String origin) {
+            this(createDefaultDependenciesConfig(authToken, timeout, origin));
         }
 
         Dependencies(DependenciesConfig config) {
@@ -205,7 +223,7 @@ public final class HttpAppleMapsGateway implements AppleMapsGateway {
         ) {
         }
 
-        private static DependenciesConfig createDefaultDependenciesConfig(String authToken, Duration timeout) {
+        private static DependenciesConfig createDefaultDependenciesConfig(String authToken, Duration timeout, String origin) {
             ThreadFactory httpClientThreadFactory = new ThreadFactory() {
                 private final AtomicInteger httpClientThreadSequence = new AtomicInteger(1);
 
@@ -221,7 +239,7 @@ public final class HttpAppleMapsGateway implements AppleMapsGateway {
             HttpClient httpClient = HttpClient.newBuilder().executor(httpClientExecutorService).build();
 
             return new DependenciesConfig(
-                new AppleMapsAuthorizationService(authToken, timeout),
+                new AppleMapsAuthorizationService(authToken, timeout, origin),
                 AppleMapsObjectMapperFactory.create(),
                 httpClient,
                 timeout,

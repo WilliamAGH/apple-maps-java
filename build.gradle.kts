@@ -14,8 +14,10 @@ import java.util.Properties
 import java.io.FileInputStream
 
 plugins {
-    id("com.vanniktech.maven.publish") version "0.35.0"
     `java-library`
+    `maven-publish`
+    signing
+    id("com.gradleup.nmcp") version "1.2.1"
 }
 
 // Load .env file if it exists
@@ -45,7 +47,7 @@ val javaTargetVersion = 17
 group = providers.gradleProperty("GROUP").orNull ?: "com.williamcallahan"
 version = providers.gradleProperty("version").orNull
     ?: providers.gradleProperty("VERSION_NAME").orNull
-    ?: "0.1.2"
+    ?: "0.1.4-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -160,12 +162,69 @@ tasks.withType<Javadoc>().configureEach {
     (options as StandardJavadocDocletOptions).addStringOption("-release", javaTargetVersion.toString())
 }
 
-mavenPublishing {
-    publishToMavenCentral(automaticRelease = true)
-    signAllPublications()
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+            artifactId = providers.gradleProperty("POM_ARTIFACT_ID").orNull ?: "apple-maps-java"
+
+            pom {
+                name.set(providers.gradleProperty("POM_NAME").orNull ?: "Apple Maps Java")
+                description.set(providers.gradleProperty("POM_DESCRIPTION").orNull ?: "Apple Maps Java implements the Apple Maps Server API for use in JVMs.")
+                url.set(providers.gradleProperty("POM_URL").orNull ?: "https://github.com/WilliamAGH/apple-maps-java")
+
+                licenses {
+                    license {
+                        name.set(providers.gradleProperty("POM_LICENSE_NAME").orNull ?: "MIT License")
+                        url.set(providers.gradleProperty("POM_LICENSE_URL").orNull ?: "https://opensource.org/license/mit")
+                    }
+                }
+
+                developers {
+                    developer {
+                        id.set(providers.gradleProperty("POM_DEVELOPER_ID").orNull ?: "WilliamAGH")
+                        name.set(providers.gradleProperty("POM_DEVELOPER_NAME").orNull ?: "William Callahan")
+                        url.set(providers.gradleProperty("POM_DEVELOPER_URL").orNull ?: "https://github.com/WilliamAGH/")
+                    }
+                }
+
+                scm {
+                    url.set(providers.gradleProperty("POM_SCM_URL").orNull ?: "https://github.com/WilliamAGH/apple-maps-java")
+                    connection.set(providers.gradleProperty("POM_SCM_CONNECTION").orNull ?: "scm:git:git://github.com/WilliamAGH/apple-maps-java.git")
+                    developerConnection.set(providers.gradleProperty("POM_SCM_DEV_CONNECTION").orNull ?: "scm:git:ssh://git@github.com/WilliamAGH/apple-maps-java.git")
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            val releasesUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            val snapshotsUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsUrl else releasesUrl
+
+            credentials {
+                username = providers.environmentVariable("SONATYPE_USERNAME").orNull
+                password = providers.environmentVariable("SONATYPE_PASSWORD").orNull
+            }
+        }
+    }
 }
 
-// Fix task dependency issue with Gradle 9.x and vanniktech plugin
-tasks.matching { it.name == "generateMetadataFileForMavenPublication" }.configureEach {
-    dependsOn(tasks.matching { it.name == "plainJavadocJar" })
+signing {
+    val signingKey = providers.environmentVariable("GPG_PRIVATE_KEY").orNull
+    val signingPassword = providers.environmentVariable("GPG_PASSPHRASE").orNull
+
+    if (signingKey != null && signingPassword != null) {
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign(publishing.publications)
+    }
+}
+
+nmcp {
+    publishAllPublicationsToCentralPortal {
+        username.set(providers.environmentVariable("SONATYPE_USERNAME").orNull)
+        password.set(providers.environmentVariable("SONATYPE_PASSWORD").orNull)
+        publishingType.set("USER_MANAGED")
+    }
 }

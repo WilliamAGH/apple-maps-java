@@ -1,5 +1,11 @@
 package com.williamcallahan.applemaps.cli;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
 import com.williamcallahan.applemaps.AppleMaps;
 import com.williamcallahan.applemaps.adapters.jackson.AppleMapsObjectMapperFactory;
 import com.williamcallahan.applemaps.adapters.mapsserver.AppleMapsApiException;
@@ -13,12 +19,10 @@ import com.williamcallahan.applemaps.domain.model.UserLocation;
 import com.williamcallahan.applemaps.domain.request.GeocodeInput;
 import com.williamcallahan.applemaps.domain.request.SearchAutocompleteInput;
 import com.williamcallahan.applemaps.domain.request.SearchInput;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 
+/**
+ * Command line interface for exercising Apple Maps Server API operations.
+ */
 public final class AppleMapsCli {
 
     private static final int EXIT_USAGE = 2;
@@ -55,6 +59,11 @@ public final class AppleMapsCli {
 
     private AppleMapsCli() {}
 
+    /**
+     * CLI entry point.
+     *
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
         try {
             run(args);
@@ -104,8 +113,9 @@ public final class AppleMapsCli {
             Arrays.copyOfRange(args, 1, args.length)
         );
         String token = resolveToken();
+        String origin = resolveOrigin();
 
-        try (AppleMaps api = new AppleMaps(token)) {
+        try (AppleMaps api = new AppleMaps(token, origin)) {
             ParsedOptions resolvedOptions = commandUsesLocationHints(command)
                 ? options.resolveUserLocation(api)
                 : options;
@@ -245,6 +255,10 @@ public final class AppleMapsCli {
         throw new UsageException(
             "Missing APPLE_MAPS_TOKEN. Set it as an env var or JVM system property."
         );
+    }
+
+    private static String resolveOrigin() {
+        return readSettingText("APPLE_MAPS_ORIGIN").orElse(null);
     }
 
     private static java.util.Optional<String> readSettingText(

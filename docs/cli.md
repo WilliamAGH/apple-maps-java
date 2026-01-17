@@ -4,7 +4,7 @@ This repo includes a small CLI for running Apple Maps Server queries from your t
 
 ## Prerequisites
 
-Set `APPLE_MAPS_TOKEN` (env var recommended). See `README.md` / `docs/authorization.md`.
+Set `APPLE_MAPS_TOKEN` (env var recommended). Optionally set `APPLE_MAPS_ORIGIN` if your token requires it (e.g. `https://api.example.com` matching your JWT's `origin` claim). See `README.md` / `docs/authorization.md`.
 
 ## Run
 

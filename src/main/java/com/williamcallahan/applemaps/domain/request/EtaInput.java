@@ -29,6 +29,15 @@ public record EtaInput(
     private static final String PARAMETER_DEPARTURE_DATE = "departureDate";
     private static final String PARAMETER_ARRIVAL_DATE = "arrivalDate";
 
+    /**
+     * Canonical constructor that validates required fields and normalizes optional values.
+     *
+     * @param origin origin location
+     * @param destinations destination locations (maximum 10)
+     * @param transportType optional transport type
+     * @param departureDate optional departure date/time (format as expected by the API)
+     * @param arrivalDate optional arrival date/time (format as expected by the API)
+     */
     public EtaInput {
         origin = Objects.requireNonNull(origin, "origin");
         destinations = normalizeList(destinations);
@@ -38,6 +47,11 @@ public record EtaInput(
         validateDestinations(destinations);
     }
 
+    /**
+     * Converts this input to a query string suitable for the Apple Maps Server API.
+     *
+     * @return a query string beginning with {@code ?}
+     */
     public String toQueryString() {
         List<String> parameters = new ArrayList<>();
         parameters.add(formatParameter(PARAMETER_ORIGIN, origin.toQueryString()));
@@ -48,6 +62,13 @@ public record EtaInput(
         return QUERY_PREFIX + String.join(PARAMETER_SEPARATOR, parameters);
     }
 
+    /**
+     * Creates a builder initialized with the required origin and destinations.
+     *
+     * @param origin the route origin
+     * @param destinations the destinations (maximum 10)
+     * @return a builder
+     */
     public static Builder builder(RouteLocation origin, List<RouteLocation> destinations) {
         return new Builder(origin, destinations);
     }
@@ -84,6 +105,9 @@ public record EtaInput(
         return URLEncoder.encode(rawText, StandardCharsets.UTF_8);
     }
 
+    /**
+     * Builder for {@link EtaInput}.
+     */
     public static final class Builder {
         private final RouteLocation origin;
         private final List<RouteLocation> destinations;
@@ -96,21 +120,44 @@ public record EtaInput(
             this.destinations = normalizeList(destinations);
         }
 
+        /**
+         * Sets the requested transport type.
+         *
+         * @param transportType the transport type, or {@code null} to clear
+         * @return this builder
+         */
         public Builder transportType(TransportType transportType) {
             this.transportType = Optional.ofNullable(transportType);
             return this;
         }
 
+        /**
+         * Sets the departure date/time parameter (format as expected by the API).
+         *
+         * @param departureDate the departure date/time, or {@code null} to clear
+         * @return this builder
+         */
         public Builder departureDate(String departureDate) {
             this.departureDate = Optional.ofNullable(departureDate);
             return this;
         }
 
+        /**
+         * Sets the arrival date/time parameter (format as expected by the API).
+         *
+         * @param arrivalDate the arrival date/time, or {@code null} to clear
+         * @return this builder
+         */
         public Builder arrivalDate(String arrivalDate) {
             this.arrivalDate = Optional.ofNullable(arrivalDate);
             return this;
         }
 
+        /**
+         * Builds a validated {@link EtaInput}.
+         *
+         * @return an input instance
+         */
         public EtaInput build() {
             return new EtaInput(origin, destinations, transportType, departureDate, arrivalDate);
         }

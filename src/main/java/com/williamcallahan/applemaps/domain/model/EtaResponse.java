@@ -7,6 +7,11 @@ import java.util.Objects;
  * Estimated time of arrival results for destinations.
  */
 public record EtaResponse(List<EtaEstimate> etas) {
+    /**
+     * Canonical constructor that normalizes potentially-null lists to immutable lists.
+     *
+     * @param etas ETA estimates returned by the API
+     */
     public EtaResponse {
         etas = normalizeList(etas);
     }

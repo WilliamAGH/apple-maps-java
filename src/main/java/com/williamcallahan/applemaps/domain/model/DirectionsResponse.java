@@ -14,6 +14,15 @@ public record DirectionsResponse(
     List<DirectionsStep> steps,
     List<List<Location>> stepPaths
 ) {
+    /**
+     * Canonical constructor that normalizes potentially-null optionals and lists.
+     *
+     * @param origin origin place, if available
+     * @param destination destination place, if available
+     * @param routes routes returned by the API
+     * @param steps steps returned by the API
+     * @param stepPaths step path coordinate arrays returned by the API
+     */
     public DirectionsResponse {
         origin = normalizeOptional(origin);
         destination = normalizeOptional(destination);
