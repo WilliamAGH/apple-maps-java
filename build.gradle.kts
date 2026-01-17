@@ -47,7 +47,7 @@ val javaTargetVersion = 17
 group = providers.gradleProperty("GROUP").orNull ?: "com.williamcallahan"
 version = providers.gradleProperty("version").orNull
     ?: providers.gradleProperty("VERSION_NAME").orNull
-    ?: "0.1.3"
+    ?: "0.1.4-SNAPSHOT"
 
 repositories {
     mavenCentral()
