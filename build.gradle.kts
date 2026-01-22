@@ -17,7 +17,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    id("com.gradleup.nmcp") version "1.2.1"
+    id("com.gradleup.nmcp") version "1.4.3"
 }
 
 // Load .env file if it exists
