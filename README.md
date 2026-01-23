@@ -38,7 +38,7 @@ This repo’s build uses a Gradle Java toolchain (Java 17). If you don’t have 
 
 ```groovy
 dependencies {
-    implementation("com.williamcallahan:apple-maps-java:0.1.4")
+    implementation("com.williamcallahan:apple-maps-java:0.1.5")
 }
 ```
 
@@ -48,7 +48,7 @@ dependencies {
 <dependency>
   <groupId>com.williamcallahan</groupId>
   <artifactId>apple-maps-java</artifactId>
-  <version>0.1.4</version>
+  <version>0.1.5</version>
 </dependency>
 ```
 
