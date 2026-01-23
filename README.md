@@ -190,7 +190,7 @@ Common use case: business / startup search (name-only or name + address) via Sea
 
 ## Quota (included limits)
 
-Apple provides free daily quotas that are currently significantly more generous* than Google Maps API. But you must have a paid Apple Developer Program membership, which costs $99/year for access to all its Apple ecosystem resources. This API is Apple hardware/software agnostic.
+Apple provides free daily quotas that are currently significantly more generous than Google Maps API. But you must have a paid Apple Developer Program membership, which costs $99/year for access to all its Apple ecosystem resources. This API is Apple hardware/software agnostic.
 
 Apple applies a daily service-call limit per membership (for example, a quota shared between MapKit JS service requests and Apple Maps Server API calls). When you exceed the daily quota, Apple responds with HTTP `429 Too Many Requests`. Apple does not provide a self-serve way to purchase additional quota; for extra capacity, contact Apple via the [Maps developer dashboard](https://maps.developer.apple.com/).
 
