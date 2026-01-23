@@ -1,6 +1,8 @@
 [![Maven Central](https://img.shields.io/maven-central/v/com.williamcallahan/apple-maps-java)](https://central.sonatype.com/artifact/com.williamcallahan/apple-maps-java)
 [![CI](https://github.com/WilliamAGH/apple-maps-java/actions/workflows/CI.yaml/badge.svg)](https://github.com/WilliamAGH/apple-maps-java/actions/workflows/CI.yaml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
+[![Context7](assets/context7-badge.svg)](https://context7.com/williamagh/apple-maps-java)
+[![DeepWiki](assets/deepwiki-badge.svg)](https://deepwiki.com/WilliamAGH/apple-maps-java)
 
 # Apple Maps Server SDK for Java
 
