@@ -1,0 +1,115 @@
+name: Update README version (Maven Central)
+
+on:
+  # Keep README correct even if Central metadata lags a bit after release
+  schedule:
+    - cron: "23 6 * * *" # daily
+  workflow_dispatch: {}
+  # Best-effort: Central may lag behind a published GitHub release
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-readme-version
+  cancel-in-progress: false
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Resolve latest release version from Maven Central metadata
+        id: resolve
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          GROUP_ID="com.williamcallahan"
+          ARTIFACT_ID="apple-maps-java"
+
+          METADATA_URL="https://repo1.maven.org/maven2/${GROUP_ID//.//}/${ARTIFACT_ID}/maven-metadata.xml"
+
+          echo "Fetching: ${METADATA_URL}"
+          XML="$(curl -fsSL "$METADATA_URL")"
+
+          # Extract <release>...</release> (fallback to <latest> if needed)
+          RELEASE="$(printf '%s' "$XML" | sed -n 's:.*<release>\(.*\)</release>.*:\1:p' | head -n 1 || true)"
+          if [[ -z "${RELEASE}" ]]; then
+            RELEASE="$(printf '%s' "$XML" | sed -n 's:.*<latest>\(.*\)</latest>.*:\1:p' | head -n 1 || true)"
+          fi
+
+          if [[ -z "${RELEASE}" ]]; then
+            echo "Failed to resolve release version from maven-metadata.xml"
+            exit 1
+          fi
+
+          # Guardrail: don't ever write SNAPSHOT into README install snippets
+          if [[ "${RELEASE}" == *SNAPSHOT* ]]; then
+            echo "Resolved version is a SNAPSHOT (${RELEASE}); refusing to update README."
+            exit 1
+          fi
+
+          echo "version=${RELEASE}" >> "$GITHUB_OUTPUT"
+          echo "Resolved release version: ${RELEASE}"
+
+      - name: Update README.md snippets
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          VERSION='${{ steps.resolve.outputs.version }}'
+
+          if [[ ! -f "README.md" ]]; then
+            echo "README.md not found at repo root"
+            exit 1
+          fi
+
+          # Replace only the dependency coordinates/version lines in the documented snippets.
+          # This avoids rewriting unrelated occurrences of old versions elsewhere.
+          perl -0777 -i -pe '
+            my $v = $ENV{VERSION};
+
+            # Gradle snippet: implementation("group:artifact:VERSION")
+            s/(implementation\(\"com\.williamcallahan:apple-maps-java:)[^\"\)]+(\"\))/$1$v$2/g;
+
+            # Maven snippet: <version>VERSION</version> within the apple-maps-java dependency block
+            s#(<dependency>\s*<groupId>com\.williamcallahan</groupId>\s*<artifactId>apple-maps-java</artifactId>\s*<version>)[^<]+(</version>\s*</dependency>)#$1$v$2#gms;
+
+          ' README.md
+
+          echo "README.md updated to version ${VERSION}"
+
+        env:
+          VERSION: ${{ steps.resolve.outputs.version }}
+
+      - name: Detect changes
+        id: diff
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- README.md; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes to commit."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "README.md changed."
+            git --no-pager diff -- README.md
+          fi
+
+      - name: Commit and push
+        if: steps.diff.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add README.md
+          git commit -m "docs(readme): update dependency version to ${{ steps.resolve.outputs.version }}"
+          git push
