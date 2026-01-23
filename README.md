@@ -1,6 +1,26 @@
-# Apple Maps SDK for Java (Server)
+[![Maven Central](https://img.shields.io/maven-central/v/com.williamcallahan/apple-maps-java)](https://central.sonatype.com/artifact/com.williamcallahan/apple-maps-java)
+[![CI](https://github.com/WilliamAGH/apple-maps-java/actions/workflows/CI.yaml/badge.svg)](https://github.com/WilliamAGH/apple-maps-java/actions/workflows/CI.yaml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 
-A lightweight Java SDK for the Apple Maps Server API, with automatic access-token exchange/refresh.
+# Apple Maps Server SDK for Java
+
+A lightweight, unofficial Java SDK for the [Apple Maps Server API](https://developer.apple.com/documentation/applemapsserverapi).
+Designed for backend/JVM apps that need server-side geocoding, search, directions, or ETA via a REST API.
+
+This SDK automatically exchanges your long-lived Apple-issued authorization token (JWT) for short-lived access tokens and refreshes as needed.
+
+Note: this is **not** [MapKit](https://developer.apple.com/documentation/mapkit) (native UI SDK) or [MapKit JS](https://developer.apple.com/documentation/mapkitjs) (web UI SDK).
+This project is not affiliated with Apple.
+
+## Apple Maps ecosystem
+
+Apple provides three primary ways to integrate Maps. This library supports #1 (Server API).
+
+| Service | Purpose | Best for |
+| :--- | :--- | :--- |
+| [Apple Maps Server API](https://developer.apple.com/documentation/applemapsserverapi) | REST HTTP API | Backend services (Java/Kotlin/Python/etc.) that need geocoding, search, directions, or ETA data without a UI. |
+| [MapKit](https://developer.apple.com/documentation/mapkit) | Native UI framework | iOS/macOS apps that need interactive maps. |
+| [MapKit JS](https://developer.apple.com/documentation/mapkitjs) | JavaScript UI library | Web apps that need interactive maps in the browser. |
 
 ## Requirements
 
@@ -10,15 +30,13 @@ A lightweight Java SDK for the Apple Maps Server API, with automatic access-toke
 
 ## Installation
 
-Replace `0.1.3` with the latest release.
-
-Note: this repo’s build uses a Gradle Java toolchain (Java 17). If you don’t have JDK 17 installed locally, Gradle will download it automatically.
+This repo’s build uses a Gradle Java toolchain (Java 17). If you don’t have JDK 17 installed locally, Gradle will download it automatically.
 
 ### Gradle
 
 ```groovy
 dependencies {
-    implementation("com.williamcallahan:apple-maps-java:0.1.3")
+    implementation("com.williamcallahan:apple-maps-java:0.1.4")
 }
 ```
 
@@ -28,11 +46,13 @@ dependencies {
 <dependency>
   <groupId>com.williamcallahan</groupId>
   <artifactId>apple-maps-java</artifactId>
-  <version>0.1.3</version>
+  <version>0.1.4</version>
 </dependency>
 ```
 
-## Configure `APPLE_MAPS_TOKEN`
+## Configuration
+
+### `APPLE_MAPS_TOKEN` (required)
 
 Option A (recommended): environment variable
 
@@ -53,6 +73,14 @@ cp .env-example .env
 ```
 
 Then set `APPLE_MAPS_TOKEN=...` in `.env`. This repo’s Gradle build loads `.env` into system properties (useful for running integration tests locally). `.env` is ignored by git.
+
+### `APPLE_MAPS_ORIGIN` (optional)
+
+If your authorization token (JWT) was generated with a specific `origin` claim, set `APPLE_MAPS_ORIGIN` as well (this value is sent as the HTTP `Origin` header):
+
+```bash
+export APPLE_MAPS_ORIGIN="https://api.example.com"
+```
 
 ## Verify your token (integration test)
 
@@ -75,8 +103,10 @@ Or run a one-off CLI query:
 ```
 
 More:
+- Authorization/token details: `docs/authorization.md`
 - Integration tests: `docs/tests.md`
 - CLI usage: `docs/cli.md`
+- More examples: `docs/usage.md`
 
 ## Example: geocode Startup HQ (San Francisco)
 
@@ -89,7 +119,14 @@ if (token == null || token.isBlank()) {
     throw new IllegalStateException("Set APPLE_MAPS_TOKEN (env var) or APPLE_MAPS_TOKEN (system property).");
 }
 
-AppleMaps api = new AppleMaps(token);
+String origin = System.getenv("APPLE_MAPS_ORIGIN");
+if (origin == null || origin.isBlank()) {
+    origin = System.getProperty("APPLE_MAPS_ORIGIN");
+}
+
+AppleMaps api = (origin == null || origin.isBlank())
+    ? new AppleMaps(token)
+    : new AppleMaps(token, origin);
 PlaceResults results = api.geocode(GeocodeInput.builder("880 Harrison St, San Francisco, CA 94107").build());
 System.out.println(results);
 ```
@@ -129,13 +166,15 @@ Example response (trimmed):
 }
 ```
 
-## What’s included
+## Supported Server API features
 
-- Geocode + reverse geocode
-- Search + autocomplete (and `resolveCompletionUrls`)
-- Directions + ETA
-- Place lookup + alternate IDs
-More examples: `docs/usage.md`
+This SDK provides typed wrappers for common Apple Maps Server API operations:
+
+- **Geocoding**: `geocode` and `reverseGeocode`
+- **Search**: `search`
+- **Autocomplete**: `autocomplete`, `resolveCompletionUrl`, and `resolveCompletionUrls`
+- **Directions & ETA**: `directions` and `etas`
+- **Places**: `lookupPlace`, `lookupPlaces`, and `lookupAlternateIds`
 
 Common use case: business / startup search (name-only or name + address) via Search + Autocomplete.
 
@@ -149,7 +188,9 @@ Common use case: business / startup search (name-only or name + address) via Sea
 
 ## Quota (included limits)
 
-Apple provides daily quotas per Apple Developer Program membership (for example, a service-call limit shared between MapKit JS service requests and Apple Maps Server API calls). When you exceed the daily service-call quota, Apple responds with HTTP `429 Too Many Requests`. Apple does not provide a self-serve way to purchase additional quota; for extra capacity, contact Apple via the Maps developer dashboard. https://maps.developer.apple.com/
+Apple provides free daily quotas that are currently significantly more generous* than Google Maps API. But you must have a paid Apple Developer Program membership, which costs $99/year for access to all its Apple ecosystem resources. This API is Apple hardware/software agnostic.
+
+Apple applies a daily service-call limit per membership (for example, a quota shared between MapKit JS service requests and Apple Maps Server API calls). When you exceed the daily quota, Apple responds with HTTP `429 Too Many Requests`. Apple does not provide a self-serve way to purchase additional quota; for extra capacity, contact Apple via the [Maps developer dashboard](https://maps.developer.apple.com/).
 
 ## More from the author
 
