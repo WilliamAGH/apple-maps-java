@@ -269,7 +269,7 @@ class NullElementListNormalizationTest {
     }
 
     private static PlaceLookupError buildPlaceLookupError() {
-        return new PlaceLookupError(PlaceLookupErrorCode.FAILED_INTERNAL_ERROR, Optional.empty());
+        return new PlaceLookupError(PlaceLookupErrorCode.FAILED_INTERNAL_ERROR, null);
     }
 
     private static AutocompleteResult buildAutocompleteResult() {
