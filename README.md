@@ -14,6 +14,12 @@ This SDK automatically exchanges your long-lived Apple-issued authorization toke
 Note: this is **not** [MapKit](https://developer.apple.com/documentation/mapkit) (native UI SDK) or [MapKit JS](https://developer.apple.com/documentation/mapkitjs) (web UI SDK).
 This project is not affiliated with Apple.
 
+## Built with Apple Maps Java
+
+[![Brief with Apple Maps](src/main/resources/static/img/apple-maps-java-screenshot.png)](https://github.com/WilliamAGH/brief)
+
+**[Brief](https://github.com/WilliamAGH/brief)** - Terminal AI chat client with `/locate` command powered by Apple Maps Java and rendered with [TUI4J](https://github.com/WilliamAGH/tui4j).
+
 ## Apple Maps ecosystem
 
 Apple provides three primary ways to integrate Maps. This library supports #1 (Server API).
@@ -193,12 +199,6 @@ Common use case: business / startup search (name-only or name + address) via Sea
 Apple provides free daily quotas that are currently significantly more generous than Google Maps API. But you must have a paid Apple Developer Program membership, which costs $99/year for access to all its Apple ecosystem resources. This API is Apple hardware/software agnostic.
 
 Apple applies a daily service-call limit per membership (for example, a quota shared between MapKit JS service requests and Apple Maps Server API calls). When you exceed the daily quota, Apple responds with HTTP `429 Too Many Requests`. Apple does not provide a self-serve way to purchase additional quota; for extra capacity, contact Apple via the [Maps developer dashboard](https://maps.developer.apple.com/).
-
-## Built with Apple Maps Java
-
-[![Brief with Apple Maps](src/main/resources/static/img/apple-maps-java-screenshot.png)](https://github.com/WilliamAGH/brief)
-
-**[Brief](https://github.com/WilliamAGH/brief)** - Terminal AI chat client with `/locate` command powered by Apple Maps Java and rendered with [TUI4J](https://github.com/WilliamAGH/tui4j).
 
 ## More from the author
 
