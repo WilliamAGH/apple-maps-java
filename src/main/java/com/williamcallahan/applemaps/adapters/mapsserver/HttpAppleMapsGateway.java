@@ -68,6 +68,13 @@ public final class HttpAppleMapsGateway implements AppleMapsGateway {
         this(new Dependencies(authToken, timeout, null));
     }
 
+    /**
+     * Creates an HTTP gateway that calls the Apple Maps Server API with an optional Origin header.
+     *
+     * @param authToken the Apple Maps Server API authorization token
+     * @param timeout request timeout
+     * @param origin optional Origin header value to include in requests
+     */
     public HttpAppleMapsGateway(String authToken, Duration timeout, String origin) {
         this(new Dependencies(authToken, timeout, origin));
     }
@@ -170,7 +177,6 @@ public final class HttpAppleMapsGateway implements AppleMapsGateway {
     }
 
     private <T> T invokeApi(String operation, URI uri, Class<T> responseType) {
-        
         HttpRequest.Builder builder = HttpRequest.newBuilder()
             .GET()
             .uri(uri)
@@ -180,7 +186,7 @@ public final class HttpAppleMapsGateway implements AppleMapsGateway {
         if (authorizationService.getOrigin() != null) {
             builder.setHeader("Origin", authorizationService.getOrigin());
         }
-            
+
         HttpRequest httpRequest = builder.build();
         try {
             HttpResponse<byte[]> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());

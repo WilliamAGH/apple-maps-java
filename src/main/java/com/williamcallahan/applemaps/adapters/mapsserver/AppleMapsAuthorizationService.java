@@ -39,6 +39,7 @@ public final class AppleMapsAuthorizationService {
      *
      * @param authToken the Apple Maps Server API authorization token
      * @param timeout request timeout for token exchange
+     * @param origin optional Origin header value for token requests
      */
     public AppleMapsAuthorizationService(String authToken, Duration timeout, String origin) {
         this(new Dependencies(authToken, timeout, origin));
@@ -53,7 +54,12 @@ public final class AppleMapsAuthorizationService {
         this.origin = dependencies.origin();
         this.clock = dependencies.clock();
     }
-    
+
+    /**
+     * Returns the configured Origin header value, if any.
+     *
+     * @return the Origin header value, or {@code null} when not set
+     */
     public String getOrigin() {
         return origin;
     }
@@ -87,7 +93,7 @@ public final class AppleMapsAuthorizationService {
             .timeout(timeout)
             .uri(tokenUri)
             .setHeader("Authorization", "Bearer " + authToken);
-            
+
         if (origin != null) {
             builder.setHeader("Origin", origin);
         }
