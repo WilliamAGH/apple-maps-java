@@ -206,3 +206,4 @@ Apple applies a daily service-call limit per membership (for example, a quota sh
 
 - [TUI4J](https://github.com/WilliamAGH/tui4j) (a modern TUI library for Java)
 - [Brief](https://github.com/WilliamAGH/brief) (an open-source terminal AI chat app in Java)
+- [Other projects](https://williamcallahan.com/projects)
