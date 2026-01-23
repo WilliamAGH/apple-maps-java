@@ -49,7 +49,6 @@ public record DirectionsResponse(
             return List.of();
         }
         return rawList.stream()
-            .filter(Objects::nonNull)
             .map(DirectionsResponse::normalizeStepPath)
             .toList();
     }
@@ -62,4 +61,5 @@ public record DirectionsResponse(
             .filter(Objects::nonNull)
             .toList();
     }
+
 }
