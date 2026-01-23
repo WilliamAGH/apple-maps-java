@@ -17,7 +17,8 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    id("com.gradleup.nmcp") version "1.2.1"
+    id("com.gradleup.nmcp") version "1.4.3"
+    id("com.diffplug.spotless") version "6.25.0"
 }
 
 // Load .env file if it exists
@@ -68,11 +69,24 @@ val javaLauncherForTargetVersion = javaToolchainService.launcherFor {
 }
 
 dependencies {
-    implementation(platform("tools.jackson:jackson-bom:3.0.3"))
+    implementation(platform("tools.jackson:jackson-bom:3.0.4"))
     implementation("tools.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.core:jackson-annotations")
     testImplementation("org.junit.jupiter:junit-jupiter:6.0.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.2")
+}
+
+spotless {
+    java {
+        target("src/**/*.java")
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    format("misc") {
+        target("*.gradle.kts", "*.md", ".gitignore", "Makefile")
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -134,6 +148,10 @@ tasks.register<Test>("testDetail") {
 
 tasks.withType<JavaExec>().configureEach {
     javaLauncher.set(javaLauncherForTargetVersion)
+}
+
+tasks.named("check") {
+    dependsOn("spotlessCheck")
 }
 
 tasks.register<JavaExec>("cli") {
