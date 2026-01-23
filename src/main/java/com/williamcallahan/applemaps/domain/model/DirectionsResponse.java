@@ -36,13 +36,30 @@ public record DirectionsResponse(
     }
 
     private static <T> List<T> normalizeList(List<T> rawList) {
-        return List.copyOf(Objects.requireNonNullElse(rawList, List.of()));
+        if (rawList == null) {
+            return List.of();
+        }
+        return rawList.stream()
+            .filter(Objects::nonNull)
+            .toList();
     }
 
     private static List<List<Location>> normalizeStepPaths(List<List<Location>> rawList) {
-        List<List<Location>> normalizedPaths = Objects.requireNonNullElse(rawList, List.<List<Location>>of()).stream()
-            .map(path -> List.copyOf(Objects.requireNonNullElse(path, List.<Location>of())))
+        if (rawList == null) {
+            return List.of();
+        }
+        return rawList.stream()
+            .filter(Objects::nonNull)
+            .map(DirectionsResponse::normalizeStepPath)
             .toList();
-        return List.copyOf(normalizedPaths);
+    }
+
+    private static List<Location> normalizeStepPath(List<Location> rawPath) {
+        if (rawPath == null) {
+            return List.of();
+        }
+        return rawPath.stream()
+            .filter(Objects::nonNull)
+            .toList();
     }
 }

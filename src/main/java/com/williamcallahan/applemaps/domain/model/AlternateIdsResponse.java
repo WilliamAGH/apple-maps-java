@@ -19,6 +19,11 @@ public record AlternateIdsResponse(List<AlternateIdsEntry> results, List<PlaceLo
     }
 
     private static <T> List<T> normalizeList(List<T> rawList) {
-        return List.copyOf(Objects.requireNonNullElse(rawList, List.of()));
+        if (rawList == null) {
+            return List.of();
+        }
+        return rawList.stream()
+            .filter(Objects::nonNull)
+            .toList();
     }
 }

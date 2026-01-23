@@ -17,6 +17,11 @@ public record SearchAutocompleteResponse(List<AutocompleteResult> results) {
     }
 
     private static List<AutocompleteResult> normalizeList(List<AutocompleteResult> rawList) {
-        return List.copyOf(Objects.requireNonNullElse(rawList, List.of()));
+        if (rawList == null) {
+            return List.of();
+        }
+        return rawList.stream()
+            .filter(Objects::nonNull)
+            .toList();
     }
 }

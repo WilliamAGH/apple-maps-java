@@ -15,6 +15,15 @@ public record ErrorResponse(String message, List<String> details) {
      */
     public ErrorResponse {
         message = Objects.requireNonNull(message, "message");
-        details = List.copyOf(Objects.requireNonNullElse(details, List.of()));
+        details = normalizeList(details);
+    }
+
+    private static List<String> normalizeList(List<String> rawList) {
+        if (rawList == null) {
+            return List.of();
+        }
+        return rawList.stream()
+            .filter(Objects::nonNull)
+            .toList();
     }
 }
