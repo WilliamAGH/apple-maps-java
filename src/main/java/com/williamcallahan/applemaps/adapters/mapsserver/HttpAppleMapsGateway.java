@@ -183,9 +183,8 @@ public final class HttpAppleMapsGateway implements AppleMapsGateway {
             .timeout(timeout)
             .setHeader("Authorization", "Bearer " + authorizationService.getAccessToken());
 
-        if (authorizationService.getOrigin() != null) {
-            builder.setHeader("Origin", authorizationService.getOrigin());
-        }
+        authorizationService.getOrigin()
+            .ifPresent(value -> builder.setHeader("Origin", value));
 
         HttpRequest httpRequest = builder.build();
         try {
