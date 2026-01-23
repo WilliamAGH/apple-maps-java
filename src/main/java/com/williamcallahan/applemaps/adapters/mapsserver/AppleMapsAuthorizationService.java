@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -29,7 +30,7 @@ public final class AppleMapsAuthorizationService {
     private final URI tokenUri;
     private final Duration timeout;
     private final String authToken;
-    private final String origin;
+    private final Optional<String> origin;
     private final Clock clock;
     private final ReentrantLock refreshLock = new ReentrantLock();
     private final AtomicReference<AccessToken> accessToken = new AtomicReference<>();
@@ -51,16 +52,17 @@ public final class AppleMapsAuthorizationService {
         this.tokenUri = dependencies.tokenUri();
         this.timeout = dependencies.timeout();
         this.authToken = dependencies.authToken();
-        this.origin = dependencies.origin();
+        this.origin = Optional.ofNullable(dependencies.origin())
+            .filter(value -> !value.isBlank());
         this.clock = dependencies.clock();
     }
 
     /**
      * Returns the configured Origin header value, if any.
      *
-     * @return the Origin header value, or {@code null} when not set
+     * @return the Origin header value, or empty when not set
      */
-    public String getOrigin() {
+    public Optional<String> getOrigin() {
         return origin;
     }
 
@@ -94,9 +96,7 @@ public final class AppleMapsAuthorizationService {
             .uri(tokenUri)
             .setHeader("Authorization", "Bearer " + authToken);
 
-        if (origin != null) {
-            builder.setHeader("Origin", origin);
-        }
+        origin.ifPresent(value -> builder.setHeader("Origin", value));
 
         HttpRequest httpRequest = builder.build();
         try {
