@@ -1,8 +1,8 @@
 [![Maven Central](https://img.shields.io/maven-central/v/com.williamcallahan/apple-maps-java)](https://central.sonatype.com/artifact/com.williamcallahan/apple-maps-java)
 [![CI](https://github.com/WilliamAGH/apple-maps-java/actions/workflows/CI.yaml/badge.svg)](https://github.com/WilliamAGH/apple-maps-java/actions/workflows/CI.yaml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
-[![Context7](assets/context7-badge.svg)](https://context7.com/williamagh/apple-maps-java)
-[![DeepWiki](assets/deepwiki-badge.svg)](https://deepwiki.com/WilliamAGH/apple-maps-java)
+[![Context7](src/main/resources/static/img/context7-badge.svg)](https://context7.com/williamagh/apple-maps-java)
+[![DeepWiki](src/main/resources/static/img/deepwiki-badge.svg)](https://deepwiki.com/WilliamAGH/apple-maps-java)
 
 # Apple Maps Server SDK for Java
 
@@ -193,6 +193,12 @@ Common use case: business / startup search (name-only or name + address) via Sea
 Apple provides free daily quotas that are currently significantly more generous* than Google Maps API. But you must have a paid Apple Developer Program membership, which costs $99/year for access to all its Apple ecosystem resources. This API is Apple hardware/software agnostic.
 
 Apple applies a daily service-call limit per membership (for example, a quota shared between MapKit JS service requests and Apple Maps Server API calls). When you exceed the daily quota, Apple responds with HTTP `429 Too Many Requests`. Apple does not provide a self-serve way to purchase additional quota; for extra capacity, contact Apple via the [Maps developer dashboard](https://maps.developer.apple.com/).
+
+## Built with Apple Maps Java
+
+[![Brief with Apple Maps](src/main/resources/static/img/apple-maps-java-screenshot.png)](https://github.com/WilliamAGH/brief)
+
+**[Brief](https://github.com/WilliamAGH/brief)** - Terminal AI chat client with `/locate` command powered by Apple Maps Java and rendered with [TUI4J](https://github.com/WilliamAGH/tui4j).
 
 ## More from the author
 
