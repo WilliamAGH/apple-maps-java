@@ -204,27 +204,44 @@ class NullElementListNormalizationTest {
     }
 
     @Test
-    void directionsResponseFiltersNullRoutesAndStepPaths() {
+    void directionsResponseFiltersNullRoutesAndSteps() {
         List<DirectionsRoute> routesWithNull = new ArrayList<>(List.of(buildDirectionsRoute()));
         routesWithNull.add(null);
         List<DirectionsStep> stepsWithNull = new ArrayList<>(List.of(buildDirectionsStep()));
         stepsWithNull.add(null);
-        List<Location> stepPath = new ArrayList<>(List.of(buildLocation()));
-        stepPath.add(null);
-        List<List<Location>> stepPathsWithNull = new ArrayList<>(List.of(stepPath));
-        stepPathsWithNull.add(null);
 
         DirectionsResponse directionsResponse = new DirectionsResponse(
             Optional.empty(),
             Optional.empty(),
             routesWithNull,
             stepsWithNull,
-            stepPathsWithNull
+            List.of()
         );
 
         assertEquals(List.of(buildDirectionsRoute()), directionsResponse.routes());
         assertEquals(List.of(buildDirectionsStep()), directionsResponse.steps());
-        assertEquals(List.of(List.of(buildLocation())), directionsResponse.stepPaths());
+    }
+
+    @Test
+    void directionsResponsePreservesStepPathsIndexAlignment() {
+        // stepPaths preserves null entries as empty lists to maintain index alignment with steps
+        List<Location> stepPath = new ArrayList<>(List.of(buildLocation()));
+        stepPath.add(null); // null locations within a path ARE filtered
+        List<List<Location>> stepPathsWithNull = new ArrayList<>(List.of(stepPath));
+        stepPathsWithNull.add(null); // null paths are converted to empty lists (not filtered)
+
+        DirectionsResponse directionsResponse = new DirectionsResponse(
+            Optional.empty(),
+            Optional.empty(),
+            List.of(),
+            List.of(),
+            stepPathsWithNull
+        );
+
+        // Expect 2 entries: [validLocation] and [] (empty list for null path)
+        assertEquals(2, directionsResponse.stepPaths().size());
+        assertEquals(List.of(buildLocation()), directionsResponse.stepPaths().get(0));
+        assertEquals(List.of(), directionsResponse.stepPaths().get(1));
     }
 
     @Test
