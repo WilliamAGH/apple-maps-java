@@ -20,8 +20,10 @@ jobs:
   update-readme:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout default branch
         uses: actions/checkout@v6
+        with:
+          ref: main
 
       - name: Resolve latest release version from Maven Central metadata
         id: resolve
