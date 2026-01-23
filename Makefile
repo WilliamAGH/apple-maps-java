@@ -15,3 +15,7 @@ test-detail:
 .PHONY: clean
 clean:
 	./gradlew clean --no-configuration-cache
+
+.PHONY: lint
+lint:
+	./gradlew check --rerun-tasks --no-configuration-cache

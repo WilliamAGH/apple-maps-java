@@ -54,8 +54,8 @@ public record EtaInput(
      */
     public String toQueryString() {
         List<String> parameters = new ArrayList<>();
-        parameters.add(formatParameter(PARAMETER_ORIGIN, origin.toQueryString()));
-        parameters.add(formatParameter(PARAMETER_DESTINATIONS, joinDestinations(destinations)));
+        parameters.add(formatParameter(PARAMETER_ORIGIN, encode(origin.toQueryString())));
+        parameters.add(formatParameter(PARAMETER_DESTINATIONS, encode(joinDestinations(destinations))));
         transportType.ifPresent(transportMode -> parameters.add(formatParameter(PARAMETER_TRANSPORT_TYPE, transportMode.apiValue())));
         departureDate.ifPresent(departureDateText -> parameters.add(formatParameter(PARAMETER_DEPARTURE_DATE, encode(departureDateText))));
         arrivalDate.ifPresent(arrivalDateText -> parameters.add(formatParameter(PARAMETER_ARRIVAL_DATE, encode(arrivalDateText))));

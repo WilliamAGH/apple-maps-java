@@ -35,6 +35,7 @@ public record DirectionsEndpoint(String formattedLocation) {
      * @return a directions endpoint
      */
     public static DirectionsEndpoint fromLatitudeLongitude(double latitude, double longitude) {
+        Location.validateLatitudeLongitude(latitude, longitude);
         return new DirectionsEndpoint(formatCoordinatePair(latitude, longitude));
     }
 

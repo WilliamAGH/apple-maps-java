@@ -147,7 +147,7 @@ public final class AppleMaps implements AutoCloseable {
         if (results.isEmpty()) {
             return List.of();
         }
-        
+
         List<CompletableFuture<SearchResponse>> futures = results.stream()
             .map(result -> CompletableFuture.supplyAsync(() -> gateway.resolveCompletionUrl(result.completionUrl())))
             .toList();

@@ -51,6 +51,11 @@ public record SearchResponsePlace(
     }
 
     private static <T> List<T> normalizeList(List<T> rawList) {
-        return List.copyOf(Objects.requireNonNullElse(rawList, List.of()));
+        if (rawList == null) {
+            return List.of();
+        }
+        return rawList.stream()
+            .filter(Objects::nonNull)
+            .toList();
     }
 }

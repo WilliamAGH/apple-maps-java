@@ -8,28 +8,33 @@ import java.util.Optional;
  * An object that contains the search region and an array of place descriptions.
  */
 public record SearchResponse(
-    SearchMapRegion displayMapRegion,
+    Optional<SearchMapRegion> displayMapRegion,
     Optional<PaginationInfo> paginationInfo,
     List<SearchResponsePlace> results
 ) {
     /**
      * Canonical constructor that normalizes potentially-null optionals and lists.
      *
-     * @param displayMapRegion display map region returned by the API
+     * @param displayMapRegion display map region returned by the API, if available
      * @param paginationInfo pagination information, if available
      * @param results search results returned by the API
      */
     public SearchResponse {
-        displayMapRegion = Objects.requireNonNull(displayMapRegion, "displayMapRegion");
+        displayMapRegion = normalizeOptional(displayMapRegion);
         paginationInfo = normalizeOptional(paginationInfo);
         results = normalizeList(results);
     }
 
-    private static Optional<PaginationInfo> normalizeOptional(Optional<PaginationInfo> optionalInput) {
+    private static <T> Optional<T> normalizeOptional(Optional<T> optionalInput) {
         return Objects.requireNonNullElse(optionalInput, Optional.empty());
     }
 
     private static <T> List<T> normalizeList(List<T> rawList) {
-        return List.copyOf(Objects.requireNonNullElse(rawList, List.of()));
+        if (rawList == null) {
+            return List.of();
+        }
+        return rawList.stream()
+            .filter(Objects::nonNull)
+            .toList();
     }
 }
