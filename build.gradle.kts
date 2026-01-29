@@ -18,7 +18,7 @@ plugins {
     `maven-publish`
     signing
     id("com.gradleup.nmcp") version "1.4.3"
-    id("com.diffplug.spotless") version "6.25.0"
+    id("com.diffplug.spotless") version "8.2.1"
 }
 
 // Load .env file if it exists
