@@ -17,7 +17,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    id("com.gradleup.nmcp") version "1.4.3"
+    id("com.gradleup.nmcp") version "1.4.4"
     id("com.diffplug.spotless") version "6.25.0"
 }
 
