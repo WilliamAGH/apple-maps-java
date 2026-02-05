@@ -13,8 +13,14 @@ alwaysApply: true
 
 ## Rule Summary [SUM]
 
-- [GT1a-d] Git & Permissions (elevated-only git; no destructive commands)
-- [FS1a-g] File Creation & Type Safety (typed records, no maps, no raw types)
+- [ZA1a-d] Zero Tolerance Policy (zero assumptions, validation, forbidden practices, dependency verification)
+- [GT1a-h] Git & Permissions (elevated-only git; no destructive commands)
+- [CC1a-d] Clean Code & DDD (Mandatory)
+- [ID1a-d] Idiomatic Patterns & Defaults
+- [DS1a-e] Dependency Source Verification
+- [FS1a-h] File Creation & Type Safety (typed records, no maps, no raw types)
+- [LOC1a-e] Line Count Ceiling (350 lines max; SRP enforcer; zero tolerance)
+- [MO1a-g] No Monoliths (Strict SRP; Decision Logic; Extension/OCP)
 - [ND1a-c] Naming Discipline (intent-revealing identifiers only)
 - [AB1a-c] Abstraction Discipline (YAGNI; no anemic wrappers; earn reuse)
 - [CS1a-f] Code Smells / Clean Code (DRY; primitive obsession; magic literals)
@@ -24,12 +30,47 @@ alwaysApply: true
 - [TS1a-d] Testing Standards (coverage mandatory; observable behavior; refactor-resilient)
 - [VR1a-c] Verification Loops (build/test/lint steps)
 
+## [ZA1] Zero Tolerance Policy
+
+- [ZA1a] **Zero Assumptions**: Do not assume behavior, APIs, or versions. Verify in the codebase/docs first.
+- [ZA1b] **Source Verification**: For dependency code questions, inspect `~/.m2` JARs or `~/.gradle/caches/` first; fallback to upstream GitHub; never answer without referencing code.
+- [ZA1c] **Forbidden Practices**:
+  - No `Map<String, Object>`, raw types, unchecked casts, `@SuppressWarnings`, or `eslint-disable` in production.
+  - No trusting memory—verify every import/API/config against current docs.
+- [ZA1d] **Mandatory Research**: You MUST research dependency questions and correct usage. Never use legacy or `@deprecated` usage from dependencies. Ensure correct usage by reviewing related code directly in `node_modules` or Gradle caches and using online tool calls.
+
 ## [GT1] Git & Permissions
 
 - [GT1a] All git commands require elevated permissions; never run without escalation.
-- [GT1b] Never remove `.git/index.lock` automatically—stop and ask the user.
-- [GT1c] No destructive git commands (`git restore`, `git reset`, force checkout) unless explicitly ordered.
-- [GT1d] Do not skip commit signing or hooks; no `--no-verify`.
+- [GT1b] Never remove `.git/index.lock` automatically—stop and ask the user or seek explicit approval.
+- [GT1c] Read-only git commands (e.g., `git status`, `git diff`, `git log`, `git show`) never require permission. Any git command that writes to the working tree, index, or history requires explicit permission.
+- [GT1d] Do not skip commit signing or hooks; no `--no-verify`. No `Co-authored-by` or AI attribution.
+- [GT1e] Destructive git commands are prohibited unless explicitly ordered by the user (e.g., `git restore`, `git reset`, force checkout).
+- [GT1f] Treat existing staged/unstaged changes as intentional unless the user says otherwise; never “clean up” someone else’s work unprompted.
+- [GT1g] Examples of write operations that require permission: `git add`, `git commit`, `git checkout`, `git merge`, `git rebase`, `git reset`, `git restore`, `git clean`, `git cherry-pick`.
+- [GT1h] When in doubt whether a git command writes, treat it as write and request explicit approval.
+
+## [CC1] Clean Code & DDD (Mandatory)
+
+- [CC1a] **Mandatory Principles**: Clean Code principles (Robert C. Martin) and Domain-Driven Design (DDD) are **mandatory** and required in this repository.
+- [CC1b] **DRY (Don't Repeat Yourself)**: Avoid redundant code. Reuse code where appropriate and consistent with clean code principles.
+- [CC1c] **YAGNI (You Aren't Gonna Need It)**: Do not build features or abstractions "just in case". Implement only what is required for the current task.
+- [CC1d] **Clean Architecture**: Dependencies point inward. Domain logic has zero framework imports.
+
+## [ID1] Idiomatic Patterns & Defaults
+
+- [ID1a] **Defaults First**: Always prefer the idiomatic, expected, and default patterns provided by the framework, library, or SDK (Java 21+, etc.).
+- [ID1b] **Custom Justification**: Custom implementations require a compelling reason. If you can't justify it, use the standard way.
+- [ID1c] **No Reinventing**: Do not build custom utilities for things the platform already does.
+- [ID1d] **Dependencies**: Make careful use of dependencies. Do not make assumptions—use the correct idiomatic behavior to avoid boilerplate.
+
+## [DS1] Dependency Source Verification
+
+- [DS1a] **Locate**: Find source JARs in Gradle cache: `find ~/.gradle/caches/modules-2/files-2.1 -name "*-sources.jar" | grep <artifact>`.
+- [DS1b] **List**: View JAR contents without extraction: `unzip -l <jar_path> | grep <ClassName>`.
+- [DS1c] **Read**: Pipe specific file content to stdout: `unzip -p <jar_path> <internal/path/to/Class.java>`.
+- [DS1d] **Search**: To use `ast-grep` on dependencies, pipe content directly: `unzip -p <jar> <file> | ast-grep run --pattern '...' --lang java --stdin`. No temp files required.
+- [DS1e] **Efficiency**: Do not extract full JARs. Use CLI piping for instant access.
 
 ## [FS1] File Creation & Type Safety
 
@@ -40,6 +81,26 @@ alwaysApply: true
 - [FS1e] Domain has zero framework imports; dependencies point inward.
 - [FS1f] No generic utilities: reject `*Utils/*Helper/*Common`; use domain-specific names.
 - [FS1g] Domain value types: wrap identifiers, amounts, and values with invariants in records.
+- [FS1h] File size discipline: see [LOC1a] and [MO1a].
+
+## [LOC1] Line Count Ceiling (Repo-Wide)
+
+- [LOC1a] All written, non-generated source files in this repository MUST be <= 350 lines (`wc -l`), including `AGENTS.md`
+- [LOC1b] SRP Enforcer: This 350-line "stick" forces modularity (DDD/SRP); > 350 lines = too many responsibilities (see [MO1d])
+- [LOC1c] Zero Tolerance: No edits allowed to files > 350 LOC (even legacy); you MUST split/retrofit before applying your change
+- [LOC1d] Enforcement: run line count checks and treat failures as merge blockers
+- [LOC1e] Exempt files: generated content, lockfiles, and large example/data dumps
+
+## [MO1] No Monoliths
+
+- [MO1a] No monoliths: avoid multi-concern files and catch-all modules
+- [MO1b] New work starts in new files; when touching a monolith, extract at least one seam
+- [MO1c] If safe extraction impossible, halt and ask
+- [MO1d] Strict SRP: each unit serves one actor; separate logic that changes for different reasons
+- [MO1e] Boundary rule: cross-module interaction happens only through explicit, typed contracts with dependencies pointing inward; don’t reach into other modules’ internals or mix web/use-case/domain/persistence concerns in one unit
+- [MO1f] Decision Logic: New feature → New file; Bug fix → Edit existing; Logic change → Extract/Replace
+- [MO1g] Extension (OCP): Add functionality via new classes/composition; do not modify stable code to add features
+-   Contract: `docs/contracts/code-change.md`
 
 ## [ND1] Naming Discipline
 
