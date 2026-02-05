@@ -1,3 +1,7 @@
+---
+title: "Tests"
+---
+
 # Tests
 
 This repo has unit tests and an optional integration test that calls the live Apple Maps Server API.

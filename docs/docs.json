@@ -1,0 +1,37 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Apple Maps Server SDK for Java",
+  "colors": {
+    "primary": "#007ec6"
+  },
+  "navigation": {
+    "groups": [
+      {
+        "group": "Getting Started",
+        "pages": [
+          "usage",
+          "authorization"
+        ]
+      },
+      {
+        "group": "CLI",
+        "pages": [
+          "cli"
+        ]
+      },
+      {
+        "group": "Testing",
+        "pages": [
+          "tests"
+        ]
+      },
+      {
+        "group": "Contracts",
+        "pages": [
+          "contracts/code-change"
+        ]
+      }
+    ]
+  }
+}

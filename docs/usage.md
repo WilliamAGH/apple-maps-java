@@ -1,3 +1,7 @@
+---
+title: "Usage"
+---
+
 # Usage
 
 ## Quick start
