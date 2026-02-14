@@ -58,6 +58,44 @@ dependencies {
 </dependency>
 ```
 
+### Snapshots
+
+Snapshots are published to Sonatype's snapshot repository (separate from Maven Central releases):
+
+```text
+https://central.sonatype.com/repository/maven-snapshots/
+```
+
+Gradle:
+
+```groovy
+repositories {
+    mavenCentral()
+    maven { url "https://central.sonatype.com/repository/maven-snapshots/" }
+}
+
+dependencies {
+    implementation("com.williamcallahan:apple-maps-java:0.1.6-SNAPSHOT")
+}
+```
+
+Maven:
+
+```xml
+<repositories>
+  <repository>
+    <id>sonatype-snapshots</id>
+    <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+    <releases>
+      <enabled>false</enabled>
+    </releases>
+    <snapshots>
+      <enabled>true</enabled>
+    </snapshots>
+  </repository>
+</repositories>
+```
+
 ## Configuration
 
 ### `APPLE_MAPS_TOKEN` (required)
