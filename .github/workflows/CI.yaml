@@ -24,7 +24,7 @@ jobs:
           distribution: "temurin"
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Build and test
         run: ./gradlew build
@@ -50,5 +50,5 @@ jobs:
         run: ./gradlew publishAllPublicationsToCentralPortalSnapshots -x test
 
       - name: Update dependency graph
-        uses: gradle/actions/dependency-submission@v5
+        uses: gradle/actions/dependency-submission@v6
         continue-on-error: true
