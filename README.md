@@ -3,6 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 [![Context7](src/main/resources/static/img/context7-badge.svg)](https://context7.com/williamagh/apple-maps-java)
 [![DeepWiki](src/main/resources/static/img/deepwiki-badge.svg)](https://deepwiki.com/WilliamAGH/apple-maps-java)
+[![Docs](https://img.shields.io/badge/docs-mintlify-18b884)](https://www.mintlify.com/WilliamAGH/apple-maps-java)
 
 # Apple Maps Server SDK for Java
 
@@ -38,6 +39,8 @@ Apple provides three primary ways to integrate Maps. This library supports #1 (S
 
 ## Installation
 
+> Latest stable release: **0.1.5** — [view on Maven Central](https://central.sonatype.com/artifact/com.williamcallahan/apple-maps-java) | [view on mvnrepository](https://mvnrepository.com/artifact/com.williamcallahan/apple-maps-java)
+
 This repo’s build uses a Gradle Java toolchain (Java 17). If you don’t have JDK 17 installed locally, Gradle will download it automatically.
 
 ### Gradle
@@ -60,11 +63,7 @@ dependencies {
 
 ### Snapshots
 
-Snapshots are published to Sonatype's snapshot repository (separate from Maven Central releases):
-
-```text
-https://central.sonatype.com/repository/maven-snapshots/
-```
+Snapshots are published automatically on every push to `main` and are available from Sonatype’s snapshot repository (separate from Maven Central releases).
 
 Gradle:
 
@@ -94,6 +93,14 @@ Maven:
     </snapshots>
   </repository>
 </repositories>
+
+<dependencies>
+  <dependency>
+    <groupId>com.williamcallahan</groupId>
+    <artifactId>apple-maps-java</artifactId>
+    <version>0.1.6-SNAPSHOT</version>
+  </dependency>
+</dependencies>
 ```
 
 ## Configuration
