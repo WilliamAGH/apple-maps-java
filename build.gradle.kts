@@ -69,7 +69,7 @@ val javaLauncherForTargetVersion = javaToolchainService.launcherFor {
 }
 
 dependencies {
-    implementation(platform("tools.jackson:jackson-bom:3.0.4"))
+    implementation(platform("tools.jackson:jackson-bom:3.1.2"))
     implementation("tools.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.core:jackson-annotations")
     testImplementation("org.junit.jupiter:junit-jupiter:6.0.2")
