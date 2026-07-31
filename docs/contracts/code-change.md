@@ -12,7 +12,7 @@ See `AGENTS.md` ([LOC1a-e], [MO1a-g], [FS1a-h], [ND1a-c], [CC1a-d], [TS1a-d], [V
 
 - **SRP/DDD only**: each new type/method has one reason to change ([MO1d], [CC1a]).
 - **New feature → new file**; do not grow monoliths ([MO1b], [FS1b]).
-- **No edits to >350 LOC files**; first split/retrofit ([LOC1c]).
+- **No edits to >500 LOC files**; first split/retrofit ([LOC1c]).
 - **Domain is framework-free**; dependencies point inward ([CC1d], [FS1e]).
 - **No DTOs**; domain records/interfaces are the API response types.
 - **No map payloads** (`Map<String,Object>`, stringly helpers, map-based mappers) ([ZA1c], [FS1b]).
@@ -45,7 +45,7 @@ If any bullet fails, create a new type and inject it explicitly.
 2. **Pick the correct layer** (web → use case → domain → adapters/out) ([AR1a]).
 3. **Pick the correct feature package** (feature-first, lowercase, singular nouns).
 4. **Name by role** (ban generic names; suffix declares meaning) ([ND1a-b]).
-5. **Keep the file small** (stay comfortably under 350 LOC; split by concept early) ([LOC1a], [MO1d]).
+5. **Keep the file small** (stay comfortably under 500 LOC; split by concept early) ([LOC1a], [MO1d]).
 6. **Add/adjust tests** using existing patterns/utilities ([TS1a], [TS1b]).
 7. **Verify** with repo-standard commands (`./gradlew build`, `./gradlew spotlessCheck`) ([VR1a], [VR1c]).
 
