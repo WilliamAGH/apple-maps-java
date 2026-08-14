@@ -159,3 +159,4 @@ alwaysApply: true
 - [VR1b] Tests: `./gradlew test`; targeted runs use `--tests`.
 - [VR1c] Lint: `./gradlew spotlessCheck` (if configured).
 - [VR1d] Completion tail: with local gates green, commit in the task worktree, merge to `dev`, push, and watch the push-triggered remote CI run to a terminal verdict (one watcher per SHA, polls >= 60s apart); fix failures, commit, and push until green.
+- [VR1e] File GitHub issues only for material defects or features (behavior, correctness, security, performance, data quality, or a governed contract); fix pedantic/nitpick/style-only findings in place or drop them, never file them. Fixes and issue scope follow the minimalism bar: reuse before new code and simplify before completing, per the `ponytail` and `ce-simplify-code` skills.
