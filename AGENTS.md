@@ -28,7 +28,7 @@ alwaysApply: true
 - [NO1a-e] Null/Optional Discipline (Optional for singletons; empty collections; no null returns)
 - [AR1a-d] Architecture & DDD (domain records; ports/adapters; layer boundaries)
 - [TS1a-d] Testing Standards (coverage mandatory; observable behavior; refactor-resilient)
-- [VR1a-c] Verification Loops (build/test/lint steps)
+- [VR1a-d] Verification Loops (build/test/lint steps; completion tail)
 
 ## [ZA1] Zero Tolerance Policy
 
@@ -47,7 +47,7 @@ alwaysApply: true
 - [GT1d] Do not skip commit signing or hooks; no `--no-verify`. No `Co-authored-by` or AI attribution.
 - [GT1e] Destructive git commands are prohibited unless explicitly ordered by the user (e.g., `git restore`, `git reset`, force checkout).
 - [GT1f] Treat existing staged/unstaged changes as intentional unless the user says otherwise; never “clean up” someone else’s work unprompted.
-- [GT1g] Examples of write operations that require permission: `git add`, `git commit`, `git checkout`, `git merge`, `git rebase`, `git reset`, `git restore`, `git clean`, `git cherry-pick`.
+- [GT1g] A task's authorization covers its worktree lifecycle: creating the task branch/worktree, committing in it, merging to `dev` (the integration branch), and pushing `dev`. Destructive commands (`git reset`, `git restore`, `git clean`, `git rebase`, force checkout, history rewrites) still require explicit user orders.
 - [GT1h] When in doubt whether a git command writes, treat it as write and request explicit approval.
 
 ## [CC1] Clean Code & DDD (Mandatory)
@@ -158,3 +158,4 @@ alwaysApply: true
 - [VR1a] Build: `./gradlew build`; expect success.
 - [VR1b] Tests: `./gradlew test`; targeted runs use `--tests`.
 - [VR1c] Lint: `./gradlew spotlessCheck` (if configured).
+- [VR1d] Completion tail: with local gates green, commit in the task worktree, merge to `dev`, push, and watch the push-triggered remote CI run to a terminal verdict (one watcher per SHA, polls >= 60s apart); fix failures, commit, and push until green.
