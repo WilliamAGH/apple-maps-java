@@ -65,18 +65,32 @@ public final class HttpAppleMapsGateway implements AppleMapsGateway {
      * @param timeout request timeout
      */
     public HttpAppleMapsGateway(String authToken, Duration timeout) {
-        this(new Dependencies(authToken, timeout, null));
+        this(authToken, timeout, null);
     }
 
     /**
      * Creates an HTTP gateway that calls the Apple Maps Server API with an optional Origin header.
+     * A new connection may take the whole request timeout to establish.
      *
      * @param authToken the Apple Maps Server API authorization token
      * @param timeout request timeout
      * @param origin optional Origin header value to include in requests
      */
     public HttpAppleMapsGateway(String authToken, Duration timeout, String origin) {
-        this(new Dependencies(authToken, timeout, origin));
+        this(authToken, timeout, origin, timeout);
+    }
+
+    /**
+     * Creates an HTTP gateway whose new connections (TCP connect and TLS handshake) to the Apple
+     * Maps Server API, including the token exchange, fail after {@code connectTimeout}.
+     *
+     * @param authToken the Apple Maps Server API authorization token
+     * @param timeout request timeout
+     * @param origin optional Origin header value to include in requests
+     * @param connectTimeout time allowed to establish a new connection
+     */
+    public HttpAppleMapsGateway(String authToken, Duration timeout, String origin, Duration connectTimeout) {
+        this(new Dependencies(authToken, timeout, origin, connectTimeout));
     }
 
     HttpAppleMapsGateway(Dependencies dependencies) {
@@ -207,8 +221,8 @@ public final class HttpAppleMapsGateway implements AppleMapsGateway {
         private final Duration timeout;
         private final ExecutorService executorService;
 
-        Dependencies(String authToken, Duration timeout, String origin) {
-            this(createDefaultDependenciesConfig(authToken, timeout, origin));
+        Dependencies(String authToken, Duration timeout, String origin, Duration connectTimeout) {
+            this(createDefaultDependenciesConfig(authToken, timeout, origin, connectTimeout));
         }
 
         Dependencies(DependenciesConfig config) {
@@ -228,7 +242,12 @@ public final class HttpAppleMapsGateway implements AppleMapsGateway {
         ) {
         }
 
-        private static DependenciesConfig createDefaultDependenciesConfig(String authToken, Duration timeout, String origin) {
+        private static DependenciesConfig createDefaultDependenciesConfig(
+            String authToken,
+            Duration timeout,
+            String origin,
+            Duration connectTimeout
+        ) {
             ThreadFactory httpClientThreadFactory = new ThreadFactory() {
                 private final AtomicInteger httpClientThreadSequence = new AtomicInteger(1);
 
@@ -241,10 +260,13 @@ public final class HttpAppleMapsGateway implements AppleMapsGateway {
                 }
             };
             ExecutorService httpClientExecutorService = Executors.newCachedThreadPool(httpClientThreadFactory);
-            HttpClient httpClient = HttpClient.newBuilder().executor(httpClientExecutorService).build();
+            HttpClient httpClient = HttpClient.newBuilder()
+                .executor(httpClientExecutorService)
+                .connectTimeout(connectTimeout)
+                .build();
 
             return new DependenciesConfig(
-                new AppleMapsAuthorizationService(authToken, timeout, origin),
+                new AppleMapsAuthorizationService(authToken, timeout, origin, httpClient),
                 AppleMapsObjectMapperFactory.create(),
                 httpClient,
                 timeout,
