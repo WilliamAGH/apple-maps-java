@@ -1,3 +1,7 @@
+---
+title: "CLI"
+---
+
 # CLI
 
 This repo includes a small CLI for running Apple Maps Server queries from your terminal.

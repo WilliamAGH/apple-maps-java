@@ -47,6 +47,18 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "Release version: $VERSION"
 
+      - name: Fail if SNAPSHOT tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          if [[ "$VERSION" == *-SNAPSHOT ]]; then
+            echo "::error::Refusing to publish SNAPSHOT version '$VERSION' with the release workflow."
+            echo "::error::Create a non-SNAPSHOT release tag (e.g., v0.1.5) for Maven Central releases."
+            echo "::error::For snapshots, push a -SNAPSHOT version on main and publish via publishAllPublicationsToCentralPortalSnapshots."
+            exit 1
+          fi
+
       - name: Build and test
         run: ./gradlew build -Pversion=${{ steps.version.outputs.VERSION }}
 

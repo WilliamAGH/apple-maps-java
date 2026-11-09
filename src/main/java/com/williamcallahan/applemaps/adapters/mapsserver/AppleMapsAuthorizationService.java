@@ -43,7 +43,12 @@ public final class AppleMapsAuthorizationService {
      * @param origin optional Origin header value for token requests
      */
     public AppleMapsAuthorizationService(String authToken, Duration timeout, String origin) {
-        this(new Dependencies(authToken, timeout, origin));
+        this(authToken, timeout, origin, HttpClient.newBuilder().connectTimeout(timeout).build());
+    }
+
+    /** Exchanges tokens over the gateway's client, so they share its connect timeout and connections. */
+    AppleMapsAuthorizationService(String authToken, Duration timeout, String origin, HttpClient httpClient) {
+        this(new Dependencies(authToken, timeout, origin, httpClient));
     }
 
     AppleMapsAuthorizationService(Dependencies dependencies) {
@@ -152,10 +157,10 @@ public final class AppleMapsAuthorizationService {
         private final String origin;
         private final Clock clock;
 
-        Dependencies(String authToken, Duration timeout, String origin) {
+        Dependencies(String authToken, Duration timeout, String origin, HttpClient httpClient) {
             this(new DependenciesConfig(
                 AppleMapsObjectMapperFactory.create(),
-                HttpClient.newHttpClient(),
+                httpClient,
                 URI.create("https://maps-api.apple.com" + TOKEN_PATH),
                 timeout,
                 authToken,

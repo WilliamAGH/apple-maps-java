@@ -1,3 +1,7 @@
+---
+title: "Authorization (Apple Maps Server API)"
+---
+
 # Authorization (Apple Maps Server API)
 
 To call the Apple Maps Server API, you must provide an Apple-issued **authorization token** (a JWT).
