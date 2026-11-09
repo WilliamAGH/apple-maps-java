@@ -243,6 +243,6 @@ nmcp {
     publishAllPublicationsToCentralPortal {
         username.set(providers.environmentVariable("SONATYPE_USERNAME").orNull)
         password.set(providers.environmentVariable("SONATYPE_PASSWORD").orNull)
-        publishingType.set("USER_MANAGED")
+        publishingType.set("AUTOMATIC")
     }
 }
